@@ -1,5 +1,8 @@
 package com.eneyeitech;
 
+import com.eneyeitech.buildingmanagement.business.BuildingService;
+import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
+import com.eneyeitech.buildingmanagement.presentation.BuildingConsole;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserFactory;
 import com.eneyeitech.usermanagement.business.UserService;
@@ -57,8 +60,11 @@ public class Main {
 
         //main.showMessage(main.userOptions());
         //main.userChoice(userConsole);
-
-        System.exit(0);
+        BuildingConsole buildingConsole = new BuildingConsole(scanner, new BuildingService());
+        while(true){
+            main.showMessage(main.buildingOptions());
+            main.buildingChoice(buildingConsole);
+        }
 
     }
 
@@ -115,6 +121,16 @@ public class Main {
                 "3. Get user\n" +
                 "4. Remove user\n" +
                 "5. Login user\n" +
+                "0. Exit\n" +
+                "";
+    }
+
+    public String buildingOptions(){
+        return "" +
+                "1. Add Building\n" +
+                "2. Show buildings\n" +
+                "3. Get building\n" +
+                "4. Remove building\n" +
                 "0. Exit\n" +
                 "";
     }
@@ -178,6 +194,28 @@ public class Main {
                 break;
             case 5:
                 userConsole.loginUser();
+                break;
+            case 0:
+                System.out.println("Bye!");
+                System.exit(0);
+            default:
+        }
+    }
+
+    public void buildingChoice(BuildingConsole buildingConsole){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                buildingConsole.newBuilding();
+                break;
+            case 2:
+                buildingConsole.listBuildings();
+                break;
+            case 3:
+                buildingConsole.getBuilding();
+                break;
+            case 4:
+                buildingConsole.removeBuilding();
                 break;
             case 0:
                 System.out.println("Bye!");

@@ -1,9 +1,10 @@
 package com.eneyeitech.buildingmanagement.business;
 
-public abstract class AbstractBuilding {
-    private String name;
-    private Address address;
-    private Coordinate coordinate;
+public abstract class Building {
+    protected String id;
+    protected String name;
+    protected Address address;
+    protected Coordinate coordinate;
 
     public String getName() {
         return name;
@@ -27,5 +28,13 @@ public abstract class AbstractBuilding {
 
     public void setCoordinate(Coordinate coordinate) {
         this.coordinate = coordinate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

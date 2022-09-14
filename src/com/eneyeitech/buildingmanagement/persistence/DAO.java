@@ -1,4 +1,4 @@
-package com.eneyeitech.usermanagement.persistence;
+package com.eneyeitech.buildingmanagement.persistence;
 
 import com.eneyeitech.usermanagement.exception.TableException;
 

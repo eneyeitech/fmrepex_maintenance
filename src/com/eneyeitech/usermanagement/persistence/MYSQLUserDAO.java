@@ -25,6 +25,11 @@ public class MYSQLUserDAO extends DAO {
     }
 
     @Override
+    public boolean update(Object o) {
+        return false;
+    }
+
+    @Override
     public void clear() {
 
     }

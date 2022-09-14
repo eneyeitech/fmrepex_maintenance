@@ -41,4 +41,14 @@ public class Address {
     public void setState(State state) {
         this.state = state;
     }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "houseNo='" + houseNo + '\'' +
+                ", streetName='" + streetName + '\'' +
+                ", townName='" + townName + '\'' +
+                ", state=" + state +
+                '}';
+    }
 }

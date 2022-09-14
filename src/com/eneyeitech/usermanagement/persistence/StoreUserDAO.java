@@ -49,6 +49,15 @@ public class StoreUserDAO extends DAO<User>{
     }
 
     @Override
+    public boolean update(User user) {
+        User userInStore = store.put(user.getEmail(), user);
+        if(userInStore == null){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void clear() {
         store.clear();
     }
