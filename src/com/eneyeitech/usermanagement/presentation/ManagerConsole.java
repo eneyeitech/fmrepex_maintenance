@@ -1,0 +1,195 @@
+package com.eneyeitech.usermanagement.presentation;
+
+import com.eneyeitech.usermanagement.business.*;
+import com.eneyeitech.usermanagement.business.user.Manager;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class ManagerConsole {
+
+    private Scanner scanner;
+    private UserService userService;
+
+    private User manager;
+
+    public ManagerConsole(Scanner scanner, UserService userService, User manager){
+        this.scanner = scanner;
+        this.userService = userService;
+        this.manager = manager;
+    }
+
+    public boolean isManager(){
+        if(manager != null && manager.getUserType() != UserType.MANAGER){
+            System.out.println("User not authorized to add tenant");
+            return false;
+        }
+        return true;
+    }
+    public boolean isApproved(){
+        return manager.isApproved();
+    }
+    public void addTenant(){
+        boolean isManager = isManager();
+        if(!isManager){
+            return;
+        }
+        if(!isApproved()){
+            System.out.println("Manager not yet approved.");
+            return;
+        }
+        showPrompt("Add Tenant");
+        String type = UserType.TENANT.toString();
+        UserBuilder userBuilder = new UserBuilder(scanner);
+        User newUser = userBuilder.getUser(type);
+        boolean added = userService.add(newUser);
+        if(added){
+            userService.addTenantToManager(manager, newUser);
+            userService.add(manager);
+            System.out.println("Tenant added!");
+
+        } else {
+            System.out.println("User exist");
+        }
+    }
+
+    public void removeTenant(){
+        showPrompt("Remove a user");
+        String email = getEmail("Please enter user email: ");
+        User tenant = (User) userService.get(email);
+        boolean removed = userService.removeTenantFromManager(manager, tenant);
+        if(removed){
+            removed = userService.remove(email);
+            System.out.println("User removed!");
+            userService.add(manager);
+        } else {
+            System.out.println("User does not exist!");
+        }
+    }
+
+    public void listTenants(){
+        boolean isManager = isManager();
+        if(!isManager){
+            return;
+        }
+        showPrompt("Tenant list!");
+        //List<User> list = (List<User>) userService.getAll();
+        List<User> list = ((Manager) manager).getTenantsList();
+        int i = 0;
+        for(User user:list){
+            System.out.printf("%s: %s(%s) - %s | %s.\n",++i, user.getFullName(), user.getUserType().toString(), user.getEmail(), user.isApproved());
+        }
+    }
+
+    public void addTechnician(){
+        boolean isManager = isManager();
+        if(!isManager){
+            return;
+        }
+        if(!isApproved()){
+            System.out.println("Manager not yet approved.");
+            return;
+        }
+        showPrompt("Add Technician");
+        String type = UserType.TECHNICIAN.toString();
+        UserBuilder userBuilder = new UserBuilder(scanner);
+        User newUser = userBuilder.getUser(type);
+        boolean added = userService.add(newUser);
+        if(added){
+            userService.addTechnicianToManager(manager, newUser);
+            userService.add(manager);
+            System.out.println("Technician added!");
+
+        } else {
+            System.out.println("User exist");
+        }
+    }
+
+    public void removeTechnician(){
+        showPrompt("Remove a technician");
+        String email = getEmail("Please enter user email: ");
+        User technician = (User) userService.get(email);
+        boolean removed = userService.removeTechnicianFromManager(manager, technician);
+        if(removed){
+            removed = userService.remove(email);
+            System.out.println("Technician removed!");
+            userService.add(manager);
+        } else {
+            System.out.println("Technician does not exist!");
+        }
+    }
+
+    public void listTechnicians(){
+        boolean isManager = isManager();
+        if(!isManager){
+            return;
+        }
+        showPrompt("Technician list!");
+        //List<User> list = (List<User>) userService.getAll();
+        List<User> list = ((Manager) manager).getTechniciansList();
+        int i = 0;
+        for(User user:list){
+            System.out.printf("%s: %s(%s) - %s | %s.\n",++i, user.getFullName(), user.getUserType().toString(), user.getEmail(), user.isApproved());
+        }
+    }
+
+    public void managerDetails(){
+        String detail = "Name: %s\n" +
+                "Email: %s\n" +
+                "Phone number: %s\n" +
+                "Type: %s\n" +
+                "Approved: %s\n" +
+                "";
+        System.out.printf(detail, manager.getFullName(), manager.getEmail(), manager.getPhoneNumber(), manager.getUserType().toString(),manager.isApproved());
+    }
+    private void showPrompt(String prompt){
+        System.out.println(prompt);
+    }
+    private String getEmail(String msg){
+        showPrompt(msg);
+        String email = scanner.nextLine();
+        return email;
+    }
+
+    private String getPhoneNumber(String msg){
+        showPrompt(msg);
+        String phone = scanner.nextLine();
+        return phone;
+    }
+
+    private String getFullName(String msg){
+        showPrompt(msg);
+        String name = scanner.nextLine();
+        return name;
+    }
+
+    private String getPassword(String msg){
+        showPrompt(msg);
+        String password = scanner.nextLine();
+        return password;
+    }
+
+    private String getString(String msg){
+        showPrompt(msg);
+        return scanner.nextLine();
+    }
+
+    private String getType(){
+        showPrompt("Enter one of the following admin|tenant|dependant|manager|technician");
+        String type = scanner.nextLine();
+        switch (type){
+            case "admin":
+                return UserType.ADMINISTRATOR.name();
+            case "tenant":
+                return UserType.TENANT.name();
+            case "dependant":
+                return UserType.DEPENDANT.name();
+            case "manager":
+                return UserType.MANAGER.name();
+            case "technician":
+                return UserType.TECHNICIAN.name();
+            default:
+                return "";
+        }
+    }
+}
