@@ -7,6 +7,7 @@ import com.eneyeitech.buildingmanagement.presentation.BuildingManagerConsole;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.requestmanagement.presentation.RequestConsole;
+import com.eneyeitech.requestmanagement.presentation.RequestTenantConsole;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserFactory;
 import com.eneyeitech.usermanagement.business.UserService;
@@ -105,10 +106,11 @@ public class Main {
             case TENANT:
                 System.out.println(loggedInUser);
                 TenantConsole tenantConsole = new TenantConsole(scanner, userService, loggedInUser);
+                RequestTenantConsole requestTenantConsole = new RequestTenantConsole(scanner, userService, requestService, loggedInUser);
                 int r= 23;
                 do{
                     main.showMessage(main.tenantOptions());
-                    r = main.tenantChoice(tenantConsole);
+                    r = main.tenantChoice(tenantConsole, requestTenantConsole);
                 }while (r!= 0);
                 break;
             default:
@@ -195,6 +197,8 @@ public class Main {
                 "2. Remove Dependant\n" +
                 "3. List Dependants\n" +
                 "4. Tenant details\n" +
+                "5. Make request\n" +
+                "6. View requests\n" +
                 "0. Back\n" +
                 "";
     }
@@ -364,7 +368,7 @@ public class Main {
         }
     }
 
-    public int tenantChoice(TenantConsole console){
+    public int tenantChoice(TenantConsole console, RequestTenantConsole tenantConsole){
 
         int selection = getNumber();
         switch (selection){
@@ -379,7 +383,13 @@ public class Main {
                 return 3;
             case 4:
                 console.tenantDetails();
-                return 3;
+                return 4;
+            case 5:
+                tenantConsole.newRequest();
+                return 5;
+            case 6:
+                tenantConsole.listRequests();
+                return 6;
             case 0:
                 return 0;
             default:

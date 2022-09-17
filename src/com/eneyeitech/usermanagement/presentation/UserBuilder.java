@@ -16,7 +16,7 @@ public class UserBuilder {
 
     public UserBuilder(Scanner scanner){
         this.scanner = scanner;
-        fullName = getString("Enter first name: ");
+        fullName = getString("Enter full name: ");
         email = getString("Enter email address: ");
         phoneNumber = getString("Enter phone number: ");
         password = getString("Enter password: ");

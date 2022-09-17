@@ -16,8 +16,6 @@ public class BuildingManagerConsole {
     private Scanner scanner;
     private UserService userService;
     private BuildingService buildingService;
-
-
     private User manager;
 
     public BuildingManagerConsole(Scanner scanner, UserService userService, BuildingService buildingService, User manager){
