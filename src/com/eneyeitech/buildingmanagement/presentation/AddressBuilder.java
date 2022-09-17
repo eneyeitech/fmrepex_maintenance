@@ -42,11 +42,7 @@ public class AddressBuilder {
     }
 
     public Address getAddress(){
-        address = new Address();
-        address.setHouseNo(houseNo);
-        address.setStreetName(streetName);
-        address.setTownName(townName);
-        address.setState(state);
+        address = new Address(houseNo, streetName, townName, state);
         return  address;
     }
 }

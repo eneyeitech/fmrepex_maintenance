@@ -60,7 +60,7 @@ public class BuildingConsole {
         List<Building> list =  buildingService.getAll();
         int i = 0;
         for(Building building:list){
-            System.out.printf("%s: %s(%s) - %s.\n",++i, building.getName(), building.getAddress().getState().toString(), building.getId());
+            System.out.printf("%s: %s(%s) - %s.\n",++i, building.getName(), building.getState().toString(), building.getId());
         }
     }
 

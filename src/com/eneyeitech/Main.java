@@ -3,6 +3,10 @@ package com.eneyeitech;
 import com.eneyeitech.buildingmanagement.business.BuildingService;
 import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
 import com.eneyeitech.buildingmanagement.presentation.BuildingConsole;
+import com.eneyeitech.buildingmanagement.presentation.BuildingManagerConsole;
+import com.eneyeitech.requestmanagement.business.Request;
+import com.eneyeitech.requestmanagement.business.RequestService;
+import com.eneyeitech.requestmanagement.presentation.RequestConsole;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserFactory;
 import com.eneyeitech.usermanagement.business.UserService;
@@ -18,6 +22,8 @@ import java.util.Scanner;
 
 public class Main {
     private static UserService userService;
+    private static  BuildingService buildingService;
+    private static RequestService requestService;
     private static Scanner scanner;
     public static void main(String[] args){
         System.out.println("FMRepEx!");
@@ -26,7 +32,8 @@ public class Main {
 
         UserConsole userConsole = new UserConsole(scanner, userService);
         AuthenticationConsole authenticationConsole = new AuthenticationConsole(scanner, userService);
-
+        buildingService = new BuildingService();
+        requestService = new RequestService();
         // Adding admin as first entry
         User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
         String e = "admin@gmail.com";
@@ -60,10 +67,11 @@ public class Main {
 
         //main.showMessage(main.userOptions());
         //main.userChoice(userConsole);
-        BuildingConsole buildingConsole = new BuildingConsole(scanner, new BuildingService());
+        BuildingConsole buildingConsole = new BuildingConsole(scanner, buildingService);
+        RequestConsole requestConsole = new RequestConsole(scanner, requestService);
         while(true){
-            main.showMessage(main.buildingOptions());
-            main.buildingChoice(buildingConsole);
+            main.showMessage(main.requestOptions());
+            main.requestChoice(requestConsole);
         }
 
     }
@@ -87,10 +95,11 @@ public class Main {
                 break;
             case MANAGER:
                 ManagerConsole managerConsole = new ManagerConsole(scanner, userService, loggedInUser);
+                BuildingManagerConsole buildingManagerConsole = new BuildingManagerConsole(scanner, userService, buildingService, loggedInUser);
                 int i= 23;
                 do{
                     main.showMessage(main.managerOptions());
-                    i = main.managerChoice(managerConsole);
+                    i = main.managerChoice(managerConsole, buildingManagerConsole);
                 }while (i!= 0);
                 break;
             case TENANT:
@@ -134,6 +143,17 @@ public class Main {
                 "0. Exit\n" +
                 "";
     }
+
+    public String requestOptions(){
+        return "" +
+                "1. Add Request\n" +
+                "2. Show requests\n" +
+                "3. Get request\n" +
+                "4. Remove request\n" +
+                "0. Exit\n" +
+                "";
+    }
+
     public String loginOptions(){
         return "" +
                 "1. Login\n" +
@@ -159,6 +179,12 @@ public class Main {
                 "5. Remove Technician\n" +
                 "6. List Technicians\n" +
                 "7. Manager details\n" +
+                "8. Add Building\n" +
+                "9. Remove Building\n" +
+                "10. List Buildings\n" +
+                "11. Assign tenant to building\n" +
+                "12. De-assign tenant to building\n" +
+                "13. List building tenants\n" +
                 "0. Back\n" +
                 "";
     }
@@ -224,6 +250,28 @@ public class Main {
         }
     }
 
+    public void requestChoice(RequestConsole requestConsole){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                requestConsole.newRequest();
+                break;
+            case 2:
+                requestConsole.listRequests();
+                break;
+            case 3:
+                requestConsole.getRequest();
+                break;
+            case 4:
+                requestConsole.removeRequest();
+                break;
+            case 0:
+                System.out.println("Bye!");
+                System.exit(0);
+            default:
+        }
+    }
+
     public User loginChoice(AuthenticationConsole console){
         int selection = getNumber();
         switch (selection){
@@ -265,7 +313,7 @@ public class Main {
         }
     }
 
-    public int managerChoice(ManagerConsole console){
+    public int managerChoice(ManagerConsole console, BuildingManagerConsole managerConsole){
 
         int selection = getNumber();
         switch (selection){
@@ -290,6 +338,24 @@ public class Main {
             case 7:
                 console.managerDetails();
                 return 7;
+            case 8:
+                managerConsole.addBuilding();
+                return 8;
+            case 9:
+                managerConsole.removeBuilding();
+                return 9;
+            case 10:
+                managerConsole.listBuildings();
+                return 10;
+            case 11:
+                managerConsole.assignTenant();
+                return 8;
+            case 12:
+                managerConsole.deAssignTenant();
+                return 9;
+            case 13:
+                managerConsole.listBuildingOccupants();
+                return 10;
             case 0:
                 return 0;
             default:

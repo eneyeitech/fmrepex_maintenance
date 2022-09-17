@@ -17,4 +17,8 @@ public class AuthenticationService {
 
         return null;
     }
+
+    public boolean signup(User user){
+        return userService.add(user);
+    }
 }

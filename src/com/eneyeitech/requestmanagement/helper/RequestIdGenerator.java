@@ -1,19 +1,19 @@
-package com.eneyeitech.buildingmanagement.helper;
+package com.eneyeitech.requestmanagement.helper;
 
 import java.util.Random;
 
-public class BuildingIdGenerator {
+public class RequestIdGenerator {
     private int leftLimit = 48;
     private int rightLimit = 122;
     private int targetStringLength;
     private Random random = new Random();
 
-    public BuildingIdGenerator(int len){
+    public RequestIdGenerator(int len){
         targetStringLength = len;
     }
 
     public String generate() {
-        return "B-"+random.ints(leftLimit, rightLimit + 1)
+        return "R-"+random.ints(leftLimit, rightLimit + 1)
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();

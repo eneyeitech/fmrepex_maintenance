@@ -5,7 +5,7 @@ import com.eneyeitech.buildingmanagement.business.Building;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BuildingStore extends com.eneyeitech.buildingmanagement.database.StoreInstance {
+public class BuildingStore extends StoreInstance {
     private static BuildingStore instance;
     private ConcurrentHashMap<String, Building> store = new ConcurrentHashMap<>();
 

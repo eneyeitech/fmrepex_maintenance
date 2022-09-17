@@ -2,6 +2,8 @@ package com.eneyeitech.usermanagement.presentation;
 
 import com.eneyeitech.usermanagement.business.*;
 import com.eneyeitech.usermanagement.business.user.Manager;
+import com.eneyeitech.usermanagement.business.user.Technician;
+import com.eneyeitech.usermanagement.business.user.Tenant;
 
 import java.util.List;
 import java.util.Scanner;
@@ -74,10 +76,11 @@ public class ManagerConsole {
         }
         showPrompt("Tenant list!");
         //List<User> list = (List<User>) userService.getAll();
-        List<User> list = ((Manager) manager).getTenantsList();
+        List<Tenant> list = ((Manager) manager).getTenantsList();
+
         int i = 0;
-        for(User user:list){
-            System.out.printf("%s: %s(%s) - %s | %s.\n",++i, user.getFullName(), user.getUserType().toString(), user.getEmail(), user.isApproved());
+        for(Tenant tenant:list){
+            System.out.printf("%s: %s(%s) - %s|%s[%s].\n",++i, tenant.getFullName(), tenant.getEmail(), tenant.getBuildingId(),tenant.getManagerEmail(),tenant.getFlatNoOrLabel());
         }
     }
 
@@ -126,9 +129,9 @@ public class ManagerConsole {
         }
         showPrompt("Technician list!");
         //List<User> list = (List<User>) userService.getAll();
-        List<User> list = ((Manager) manager).getTechniciansList();
+        List<Technician> list = ((Manager) manager).getTechniciansList();
         int i = 0;
-        for(User user:list){
+        for(Technician user:list){
             System.out.printf("%s: %s(%s) - %s | %s.\n",++i, user.getFullName(), user.getUserType().toString(), user.getEmail(), user.isApproved());
         }
     }

@@ -1,5 +1,6 @@
 package com.eneyeitech.usermanagement.business;
 
+import com.eneyeitech.buildingmanagement.business.Building;
 import com.eneyeitech.usermanagement.business.user.Dependant;
 import com.eneyeitech.usermanagement.business.user.Manager;
 import com.eneyeitech.usermanagement.business.user.Technician;
@@ -23,6 +24,9 @@ public class UserService {
 
     public boolean remove(String id){
         return userDao.remove(id);
+    }
+    public boolean update(User user) {
+        return userDao.update(user);
     }
     public Object get(String id){
         return userDao.get(id);

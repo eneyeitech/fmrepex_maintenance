@@ -1,10 +1,11 @@
-package com.eneyeitech.buildingmanagement.persistence;
+package com.eneyeitech.requestmanagement.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MYSQLDAOFactory extends DAOFactory {
+public class MYSQLDAOFactory extends DAOFactory{
+
 
     //public static final String DRIVER = "org.h2.Driver";
     public static final String DRIVER = "com.mysql.jdbc.Driver";
@@ -30,8 +31,7 @@ public class MYSQLDAOFactory extends DAOFactory {
     }
 
     @Override
-    public DAO getBuildingDAO() {
-        return new MYSQLBuildingDAO();
+    public DAO getRequestDAO() {
+        return new MYSQLRequestDAO();
     }
-
 }

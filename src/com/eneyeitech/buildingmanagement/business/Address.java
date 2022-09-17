@@ -10,37 +10,33 @@ public class Address {
 
     }
 
-    public String getHouseNo() {
-        return houseNo;
+    public Address(String houseNo, String streetName, String townName, State state) {
+        this.houseNo = houseNo;
+        this.streetName = streetName;
+        this.townName = townName;
+        this.state = state;
     }
 
-    public void setHouseNo(String houseNo) {
-        this.houseNo = houseNo;
+    public String getHouseNo() {
+        return houseNo;
     }
 
     public String getStreetName() {
         return streetName;
     }
 
-    public void setStreetName(String streetName) {
-        this.streetName = streetName;
-    }
 
     public String getTownName() {
         return townName;
     }
 
-    public void setTownName(String townName) {
-        this.townName = townName;
-    }
+
 
     public State getState() {
         return state;
     }
 
-    public void setState(State state) {
-        this.state = state;
-    }
+
 
     @Override
     public String toString() {

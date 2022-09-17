@@ -20,6 +20,10 @@ public class Dependant extends User {
         this.tenantEmail = tenantEmail;
     }
 
+    public boolean hasAParent(){
+        return tenantEmail != null;
+    }
+
     @Override
     public String toString() {
         return "Dependant{" +

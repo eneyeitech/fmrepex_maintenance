@@ -20,6 +20,11 @@ public class Technician extends User {
         this.managerEmail = managerEmail;
     }
 
+
+    public boolean hasAManager(){
+        return managerEmail != null;
+    }
+
     @Override
     public String toString() {
         return "Technician{" +

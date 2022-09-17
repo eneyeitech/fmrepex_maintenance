@@ -2,7 +2,7 @@ package com.eneyeitech.buildingmanagement.persistence;
 
 import com.eneyeitech.buildingmanagement.business.Building;
 import com.eneyeitech.buildingmanagement.database.BuildingStore;
-import com.eneyeitech.usermanagement.exception.TableException;
+import com.eneyeitech.buildingmanagement.exception.TableException;
 
 import java.util.ArrayList;
 import java.util.Collections;

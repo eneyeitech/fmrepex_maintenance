@@ -2,6 +2,10 @@ package com.eneyeitech.buildingmanagement.business;
 
 import com.eneyeitech.buildingmanagement.persistence.DAO;
 import com.eneyeitech.buildingmanagement.persistence.DAOFactory;
+import com.eneyeitech.usermanagement.business.User;
+import com.eneyeitech.usermanagement.business.UserType;
+import com.eneyeitech.usermanagement.business.user.Manager;
+import com.eneyeitech.usermanagement.business.user.Tenant;
 
 import java.util.List;
 
@@ -38,5 +42,88 @@ public class BuildingService implements ICrudService<Building>{
     @Override
     public List<Building> getAll() {
         return buildingDAO.getAll();
+    }
+
+    public List<Tenant> getOccupants(String buildingId) {
+
+        Building building = get(buildingId);
+
+        if(building == null){
+            return null;
+        }
+
+        return ((ManagedBuilding) building).getBuildingOccupants();
+    }
+
+    public boolean assignTenantToBuilding(Building building, User tenant){
+        if(((ManagedBuilding) building).isOccupied()){
+            System.out.println("Building is full");
+            return false;
+        }
+        if(tenant.getUserType()!=UserType.TENANT){
+            System.out.println("User not a tenant");
+            return false;
+        }
+
+        boolean added =  ((ManagedBuilding) building).addTenant((Tenant) tenant);
+        if(added){
+            return true;
+        }
+        System.out.println("Tenant assigned successful");
+        return false;
+    }
+    public boolean deAssignTenantToBuilding(Building building, User tenant){
+
+        if(tenant.getUserType()!=UserType.TENANT){
+            System.out.println("User not a tenant");
+            return false;
+        }
+
+        boolean removed =  ((ManagedBuilding) building).removeTenant((Tenant) tenant);
+        if(removed){
+            return true;
+        }
+        System.out.println("Tenant not removed");
+        return false;
+    }
+
+    public int getBuildingCapacity(String buildingId){
+        Building building = get(buildingId);
+
+        if(building == null){
+            return 0;
+        }
+
+        return ((ManagedBuilding) building).getBuildingFlatCapacity();
+    }
+
+    public int getNoOfFlatsAvailable(String buildingId){
+        Building building = get(buildingId);
+
+        if(building == null){
+            return 0;
+        }
+
+        return ((ManagedBuilding) building).getNoOfFlatsAvailable();
+    }
+
+    public int getNoOfOccupants(String buildingId){
+        Building building = get(buildingId);
+
+        if(building == null){
+            return 0;
+        }
+
+        return ((ManagedBuilding) building).getNoOfOccupants();
+    }
+
+    public boolean isOccupied(String buildingId){
+        Building building = get(buildingId);
+
+        if(building == null){
+            return false;
+        }
+
+        return ((ManagedBuilding) building).isOccupied();
     }
 }

@@ -30,9 +30,7 @@ public class CoordinateBuilder {
     }
 
     public Coordinate getCoordinate(){
-        coordinate = new Coordinate();
-        coordinate.setLatitude(latitude);
-        coordinate.setLongitude(longitude);
+        coordinate = new Coordinate(longitude, latitude);
         return coordinate;
     }
 }

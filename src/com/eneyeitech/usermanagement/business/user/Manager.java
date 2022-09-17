@@ -58,7 +58,7 @@ public class Manager extends User {
         return false;
     }
 
-    public List<User> getTenantsList() {
+    public List<Tenant> getTenantsList() {
         return new ArrayList<>(tenantsList);
     }
 
@@ -66,11 +66,19 @@ public class Manager extends User {
         this.tenantsList = new ArrayList<>(tenantsList);
     }
 
-    public List<User> getTechniciansList() {
+    public List<Technician> getTechniciansList() {
         return new ArrayList<>(techniciansList);
     }
 
     public void setTechniciansList(List<Technician> techniciansList) {
         this.techniciansList = new ArrayList<>(techniciansList);
+    }
+
+    public boolean hasTenants(){
+        return (tenantsList != null && tenantsList.size() > 0);
+    }
+
+    public boolean hasTechnicians(){
+        return (techniciansList != null && techniciansList.size() > 0);
     }
 }
