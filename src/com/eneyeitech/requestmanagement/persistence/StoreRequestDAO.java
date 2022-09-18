@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StoreRequestDAO extends DAO<Request>{
 
@@ -38,7 +39,7 @@ public class StoreRequestDAO extends DAO<Request>{
     @Override
     public boolean remove(String id) {
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(id)){
@@ -58,7 +59,7 @@ public class StoreRequestDAO extends DAO<Request>{
     @Override
     public Request get(String id) {
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(id)){
@@ -72,7 +73,7 @@ public class StoreRequestDAO extends DAO<Request>{
     @Override
     public List<Request> getAll() {
         List<Request> list = new ArrayList<>();
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             list.addAll(m.getValue());
         }
         Collections.sort(list, (o1, o2) -> o1.getTenantEmail().compareTo(o2.getTenantEmail()));
@@ -95,7 +96,7 @@ public class StoreRequestDAO extends DAO<Request>{
     public boolean update(Request request) {
         String requestId = request.getId();
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(requestId)){

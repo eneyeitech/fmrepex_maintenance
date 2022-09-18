@@ -2,6 +2,7 @@ package com.eneyeitech.workordermanagement.database;
 
 import com.eneyeitech.requestmanagement.business.Request;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,5 +24,11 @@ public class RequestStore extends StoreInstance {
 
     public ConcurrentHashMap<String, List<Request>> getStore(){
         return store;
+    }
+
+    @Override
+    public void updateStore(ConcurrentHashMap cm) {
+        store = new ConcurrentHashMap<>(cm);
+        System.out.println("STORE::"+store);
     }
 }

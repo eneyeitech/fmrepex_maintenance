@@ -2,18 +2,21 @@ package com.eneyeitech.workordermanagement.presentation;
 
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
+import com.eneyeitech.workordermanagement.business.WORequestService;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class RequestConsole {
+public class WORequestConsole {
 
     private Scanner scanner;
     private RequestService requestService;
+    private WORequestService woRequestService;
 
-    public RequestConsole(Scanner scanner, RequestService requestService){
+    public WORequestConsole(Scanner scanner, RequestService requestService, WORequestService woRequestService){
         this.scanner = scanner;
         this.requestService = requestService;
+        this.woRequestService = woRequestService;
     }
 
 
@@ -22,8 +25,8 @@ public class RequestConsole {
         RequestBuilder requestBuilder = new RequestBuilder(scanner);
         Request requestToAdd = requestBuilder.getRequest();
         boolean added = requestService.add(requestToAdd);
+
         if(added){
-            System.out.println(requestToAdd);
             System.out.println("Request added!");
         } else {
             System.out.println("Request already exist");
@@ -70,6 +73,21 @@ public class RequestConsole {
         }
     }
 
+    public void woListRequests(){
+        showPrompt("WO Request list!");
+        String managerEmail = getString("Enter manager email (leave blank to return all requests)");
+        List<Request> list;
+        if(managerEmail.isBlank() || managerEmail.isEmpty()){
+            list = woRequestService.getAll();
+        }else{
+            list = woRequestService.getAll(managerEmail);
+        }
+        int i = 0;
+        for(Request request:list){
+            //System.out.printf("%s: %s(%s) - %s.\n",++i, building.getName(), building.getState().toString(), building.getId());
+            System.out.printf("%s: %s.\n",++i,request);
+        }
+    }
     private String getString(String msg){
         showPrompt(msg);
         return scanner.nextLine();

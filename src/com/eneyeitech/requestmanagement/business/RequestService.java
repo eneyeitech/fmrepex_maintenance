@@ -3,26 +3,37 @@ package com.eneyeitech.requestmanagement.business;
 import com.eneyeitech.requestmanagement.persistence.DAO;
 import com.eneyeitech.requestmanagement.persistence.DAOFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RequestService implements ICrudService<Request>{
+public class RequestService implements ICrudService<Request>, ISubject{
 
+    private List<IObserver> observerList;
     private DAO requestDAO;
     private DAOFactory storeFactory;
 
     public RequestService(){
         storeFactory = DAOFactory.getDAOFactory(DAOFactory.STORE);
         requestDAO = storeFactory.getRequestDAO();
+        observerList = new ArrayList<>();
     }
 
     @Override
     public boolean add(Request request) {
-        return requestDAO.add(request);
+        boolean added = requestDAO.add(request);
+        if(added && observerList.size()==1){
+            notifyObservers(request, null, Action.ADD);
+        }
+        return added;
     }
 
     @Override
     public boolean remove(String id) {
-        return requestDAO.remove(id);
+        boolean removed = requestDAO.remove(id);
+        if(removed && observerList.size()==1){
+            notifyObservers(null, id, Action.REMOVE);
+        }
+        return removed;
     }
 
     @Override
@@ -43,5 +54,29 @@ public class RequestService implements ICrudService<Request>{
     @Override
     public List<Request> getAll(String tenantEmail) {
         return requestDAO.getAll(tenantEmail);
+    }
+
+    @Override
+    public void registerObserver(IObserver observer) {
+        if(observerList.size() >= 1){
+            observerList.clear();
+            observerList = new ArrayList<>();
+            observerList.add(observer);
+            return;
+        }
+        observerList.add(observer);
+    }
+
+    @Override
+    public void removeObserver(IObserver observer) {
+        observerList.clear();
+        observerList = new ArrayList<>();
+    }
+
+    @Override
+    public void notifyObservers(Request r, String id, Action a) {
+        if(observerList.size()!=0){
+            observerList.get(0).execute(r,id,a);
+        }
     }
 }

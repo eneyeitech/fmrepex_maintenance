@@ -1,11 +1,13 @@
 package com.eneyeitech;
 
 import com.eneyeitech.buildingmanagement.business.BuildingService;
+import com.eneyeitech.buildingmanagement.database.StoreInstance;
 import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
 import com.eneyeitech.buildingmanagement.presentation.BuildingConsole;
 import com.eneyeitech.buildingmanagement.presentation.BuildingManagerConsole;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
+import com.eneyeitech.requestmanagement.database.RequestStore;
 import com.eneyeitech.requestmanagement.presentation.RequestConsole;
 import com.eneyeitech.requestmanagement.presentation.RequestTenantConsole;
 import com.eneyeitech.usermanagement.business.User;
@@ -13,18 +15,20 @@ import com.eneyeitech.usermanagement.business.UserFactory;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.presentation.*;
+import com.eneyeitech.workordermanagement.business.WORequestService;
+import com.eneyeitech.workordermanagement.persistence.StoreRequestDAO;
+import com.eneyeitech.workordermanagement.presentation.RequestManagerConsole;
+import com.eneyeitech.workordermanagement.presentation.WORequestConsole;
 
-import java.util.InputMismatchException;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Main {
     private static UserService userService;
     private static  BuildingService buildingService;
     private static RequestService requestService;
+    private static WORequestService woRequestService;
     private static Scanner scanner;
     public static void main(String[] args){
         System.out.println("FMRepEx!");
@@ -35,6 +39,7 @@ public class Main {
         AuthenticationConsole authenticationConsole = new AuthenticationConsole(scanner, userService);
         buildingService = new BuildingService();
         requestService = new RequestService();
+        woRequestService = new WORequestService(requestService);
         // Adding admin as first entry
         User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
         String e = "admin@gmail.com";
@@ -70,11 +75,25 @@ public class Main {
         //main.userChoice(userConsole);
         BuildingConsole buildingConsole = new BuildingConsole(scanner, buildingService);
         RequestConsole requestConsole = new RequestConsole(scanner, requestService);
+        WORequestConsole woRequestConsole = new WORequestConsole(scanner, requestService, woRequestService);
+        int v = 0;
         while(true){
-            main.showMessage(main.requestOptions());
-            main.requestChoice(requestConsole);
+            main.showMessage(main.woRequestOptions());
+            main.woRequestChoice(woRequestConsole);
         }
 
+
+
+    }
+
+    static class MyThread extends Thread{
+
+        public MyThread(int t){
+
+        }
+        public void run(){
+
+        }
     }
 
     public int mainChoice(User loggedInUser, Main main){
@@ -97,10 +116,11 @@ public class Main {
             case MANAGER:
                 ManagerConsole managerConsole = new ManagerConsole(scanner, userService, loggedInUser);
                 BuildingManagerConsole buildingManagerConsole = new BuildingManagerConsole(scanner, userService, buildingService, loggedInUser);
+                RequestManagerConsole requestManagerConsole = new RequestManagerConsole(scanner, userService, requestService, woRequestService, loggedInUser);
                 int i= 23;
                 do{
                     main.showMessage(main.managerOptions());
-                    i = main.managerChoice(managerConsole, buildingManagerConsole);
+                    i = main.managerChoice(managerConsole, buildingManagerConsole, requestManagerConsole);
                 }while (i!= 0);
                 break;
             case TENANT:
@@ -156,6 +176,17 @@ public class Main {
                 "";
     }
 
+    public String woRequestOptions(){
+        return "" +
+                "1. Add Request\n" +
+                "2. Show requests\n" +
+                "3. Show WO requests\n" +
+                "4. Get request\n" +
+                "5. Remove request\n" +
+                "0. Exit\n" +
+                "";
+    }
+
     public String loginOptions(){
         return "" +
                 "1. Login\n" +
@@ -187,6 +218,9 @@ public class Main {
                 "11. Assign tenant to building\n" +
                 "12. De-assign tenant to building\n" +
                 "13. List building tenants\n" +
+                "14. List tenants request\n" +
+                "15. List all request\n" +
+                "16. View Request\n" +
                 "0. Back\n" +
                 "";
     }
@@ -276,6 +310,31 @@ public class Main {
         }
     }
 
+    public void woRequestChoice(WORequestConsole woRequestConsole){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                woRequestConsole.newRequest();
+                break;
+            case 2:
+                woRequestConsole.listRequests();
+                break;
+            case 3:
+                woRequestConsole.woListRequests();
+                break;
+            case 4:
+                woRequestConsole.getRequest();
+                break;
+            case 5:
+                woRequestConsole.removeRequest();
+                break;
+            case 0:
+                System.out.println("Bye!");
+                System.exit(0);
+            default:
+        }
+    }
+
     public User loginChoice(AuthenticationConsole console){
         int selection = getNumber();
         switch (selection){
@@ -317,7 +376,7 @@ public class Main {
         }
     }
 
-    public int managerChoice(ManagerConsole console, BuildingManagerConsole managerConsole){
+    public int managerChoice(ManagerConsole console, BuildingManagerConsole managerConsole, RequestManagerConsole requestManagerConsole){
 
         int selection = getNumber();
         switch (selection){
@@ -359,6 +418,15 @@ public class Main {
                 return 9;
             case 13:
                 managerConsole.listBuildingOccupants();
+                return 10;
+            case 14:
+                requestManagerConsole.listTenantRequests();
+                return 8;
+            case 15:
+                requestManagerConsole.listManagerRequestsView();
+                return 9;
+            case 16:
+                requestManagerConsole.getRequest();
                 return 10;
             case 0:
                 return 0;

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StoreBuildingDAO extends DAO<Building>{
 
@@ -41,7 +42,7 @@ public class StoreBuildingDAO extends DAO<Building>{
     @Override
     public List<Building> getAll() {
         List<Building> list = new ArrayList<>();
-        for(Map.Entry<String, Building> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, Building> m: store.entrySet()){
             list.add(m.getValue());
         }
         Collections.sort(list, (o1, o2) -> o1.getName().compareTo(o2.getName()));

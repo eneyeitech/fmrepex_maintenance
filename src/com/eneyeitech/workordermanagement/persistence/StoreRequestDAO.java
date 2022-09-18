@@ -16,9 +16,31 @@ public class StoreRequestDAO extends DAO<Request> {
         store = RequestStore.getInstance().getStore();
     }
 
-    public ConcurrentHashMap<String, List<Request>> convertToManagerKey(Map<String, List<Request>> storage){
+    public static ConcurrentHashMap<String, List<Request>> convertToManagerKey(Map<String, List<Request>> storageWithTenantKey){
+        ConcurrentHashMap<String, List<Request>> storageWithManagerKey = new ConcurrentHashMap<>();
+        List<Request> requests;
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: storageWithTenantKey.entrySet()){
+            requests = new ArrayList<>(m.getValue());
+            for(Request request: requests){
+                String managerEmail = request.getManagerEmail();
+                List<Request> requestsInStore;
 
-        return null;
+                if (storageWithManagerKey.containsKey(managerEmail)){
+                    requestsInStore = new ArrayList<>(storageWithManagerKey.get(managerEmail));
+                }
+                else{
+                    requestsInStore = new ArrayList<>();
+                }
+                requestsInStore.add(request);
+                storageWithManagerKey.put(managerEmail, requestsInStore);
+            }
+        }
+        //System.out.println(storageWithManagerKey);
+        return storageWithManagerKey;
+    }
+
+    public static void update(){
+        RequestStore.getInstance().updateStore(StoreRequestDAO.convertToManagerKey(com.eneyeitech.requestmanagement.database.RequestStore.getInstance().getStore()));
     }
 
     @Override
@@ -42,7 +64,7 @@ public class StoreRequestDAO extends DAO<Request> {
     @Override
     public boolean remove(String id) {
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(id)){
@@ -62,7 +84,7 @@ public class StoreRequestDAO extends DAO<Request> {
     @Override
     public Request get(String id) {
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(id)){
@@ -76,7 +98,7 @@ public class StoreRequestDAO extends DAO<Request> {
     @Override
     public List<Request> getAll() {
         List<Request> list = new ArrayList<>();
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             list.addAll(m.getValue());
         }
         Collections.sort(list, (o1, o2) -> o1.getManagerEmail().compareTo(o2.getManagerEmail()));
@@ -99,7 +121,7 @@ public class StoreRequestDAO extends DAO<Request> {
     public boolean update(Request request) {
         String requestId = request.getId();
         List<Request> requests;
-        for(Map.Entry<String, List<Request>> m: store.entrySet()){
+        for(ConcurrentHashMap.Entry<String, List<Request>> m: store.entrySet()){
             requests = new ArrayList<>(m.getValue());
             for(Request r: requests){
                 if(r.getId().equalsIgnoreCase(requestId)){

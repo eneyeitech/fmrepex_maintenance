@@ -6,6 +6,7 @@ import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.business.user.Tenant;
+import com.eneyeitech.workordermanagement.business.WORequestService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -14,62 +15,31 @@ import java.util.Scanner;
 public class RequestManagerConsole {
     private Scanner scanner;
     private UserService userService;
-    private RequestService requestService;
-    private User tenant;
+    private RequestService tenantRequestService;
+    private WORequestService managementRequestService;
+    private User manager;
 
-    public RequestManagerConsole(Scanner scanner, UserService userService, RequestService requestService, User tenant){
+    public RequestManagerConsole(Scanner scanner, UserService userService, RequestService tenantRequestService, WORequestService managementRequestService, User manager){
         this.scanner = scanner;
         this.userService = userService;
-        this.requestService = requestService;
-        this.tenant = tenant;
-    }
-
-    public Request newRequest(){
-        if(!canMakeRequest()){
-            System.out.println("New request:: not authorised");
-            return null;
-        }
-        showPrompt("Add new request");
-        AuthorisedRequestBuilder requestBuilder = new AuthorisedRequestBuilder(scanner);
-        Request requestToAdd = requestBuilder.getRequest();
-        requestToAdd.setTenantEmail(tenant.getEmail());
-        requestToAdd.setBuildingId(((Tenant)tenant).getBuildingId());
-        requestToAdd.setManagerEmail(((Tenant)tenant).getManagerEmail());
-        requestToAdd.setFlatLabel(((Tenant)tenant).getFlatNoOrLabel());
-        boolean added = requestService.add(requestToAdd);
-        if(added){
-            System.out.println(requestToAdd);
-            System.out.println("Request added!");
-        } else {
-            System.out.println("Request already exist");
-        }
-        return requestToAdd;
-
-    }
-
-    public void removeRequest(){
-        Request request = getRequest();
-        showPrompt("Remove a request");
-        boolean removed = requestService.remove(request.getId());
-        if(removed){
-            System.out.println("Request removed!");
-        } else {
-            System.out.println("Request does not exist!");
-        }
+        this.tenantRequestService = tenantRequestService;
+        this.managementRequestService = managementRequestService;
+        this.manager = manager;
     }
 
     public Request getRequest(){
-        if(!canMakeRequest()){
+        if(!isManager()){
             System.out.println("Get request:: not authorised");
+            return null;
         }
         showPrompt("Get a request");
         String requestId = getRequestId();
-        Request request = requestService.get(requestId);
+        Request request = tenantRequestService.get(requestId);
         if (request==null){
             System.out.println("request does not exist!");
         }else{
 
-            if(tenant.getEmail().equalsIgnoreCase(request.getTenantEmail())){
+            if(manager.getEmail().equalsIgnoreCase(request.getManagerEmail())){
                 System.out.println(request);
             }else {
                 System.out.println("Not authorized to get request");
@@ -79,15 +49,46 @@ public class RequestManagerConsole {
         return request;
     }
 
-    public void listRequests(){
-        showPrompt("Request list!");
-        List<Request> list = requestService.getAll(tenant.getEmail());
+
+    public void listTenantRequests(){
+        if(!isManager()){
+            System.out.println("List request:: not authorised");
+        }
+        showPrompt("Tenant request list!");
+        String tenantEmail = getString("Enter tenant email: ");
+        Tenant tenant = (Tenant) userService.get(tenantEmail);
+        if(tenant == null){
+            System.out.println("Tenant not found!");
+            return;
+        }
+        if(!validTenantAndManagedByManager(tenant)){
+            System.out.println("Not authorized!");
+            return;
+        }
+        List<Request> list;
+        list = tenantRequestService.getAll(tenantEmail);
+
         int i = 0;
         for(Request request:list){
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             String formatDateTime = request.getCreatedDateTime().format(format);
             System.out.printf("%s: %s(%s) - %s - %s - %s | %s.\n",++i, request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
-            //System.out.printf("%s: %s.\n",++i,request);
+        }
+    }
+
+    public void listManagerRequestsView(){
+        if(!isManager()){
+            System.out.println("List request:: not authorised");
+        }
+        showPrompt("All request list");
+        List<Request> list;
+        list = managementRequestService.getAll(manager.getEmail());
+
+        int i = 0;
+        for(Request request:list){
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            String formatDateTime = request.getCreatedDateTime().format(format);
+            System.out.printf("%s: %s(%s) - %s - %s - %s | %s.\n",++i, request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
         }
     }
 
@@ -104,7 +105,7 @@ public class RequestManagerConsole {
         System.out.println(msg);
     }
 
-    public boolean isTenant(){
+    public boolean isTenant(Tenant tenant){
         if(tenant != null && tenant.getUserType() != UserType.TENANT){
             System.out.println("User not authorized");
             return false;
@@ -112,16 +113,32 @@ public class RequestManagerConsole {
         return true;
     }
 
-    public boolean hasBuilding(){
-        return ((Tenant)tenant).hasAnAssignedBuilding();
+    public boolean hasBuilding(Tenant tenant){
+        return tenant.hasAnAssignedBuilding();
     }
-    public boolean hasManager(){
-        return ((Tenant)tenant).hasAManager();
+    public boolean hasManager(Tenant tenant){
+        return tenant.hasAManager();
     }
-    public boolean hasFlat(){
-        return ((Tenant)tenant).hasAFlat();
+    public boolean hasFlat(Tenant tenant){
+        return tenant.hasAFlat();
     }
-    public boolean canMakeRequest(){
-        return isTenant() && hasBuilding() && hasManager() && hasFlat();
+    public boolean canMakeRequest(Tenant tenant){
+        return isTenant(tenant) && hasBuilding(tenant) && hasManager(tenant) && hasFlat(tenant);
+    }
+
+    public boolean isManager(){
+        if(manager != null && manager.getUserType() != UserType.MANAGER){
+            System.out.println("User not authorized");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean managedBy(Tenant tenant){
+        return (manager.getEmail().equalsIgnoreCase(tenant.getManagerEmail()));
+    }
+
+    public boolean validTenantAndManagedByManager(Tenant tenant){
+        return (canMakeRequest(tenant) && managedBy(tenant));
     }
 }

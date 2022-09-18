@@ -16,10 +16,12 @@ public class RequestBuilder {
     private Category category;
     private LocalDateTime createdDateTime;
     private String tenantEmail = null;
+    private String managerEmail = null;
 
     public RequestBuilder(Scanner scanner){
         this.scanner = scanner;
         tenantEmail = getString("Enter tenant email: ");
+        managerEmail = getString("Enter manager email: ");
         asset = getString("Enter asset needing maintenance (bulb, tap etc...): ");
         description = getString("Enter brief description of problem: ");
 
@@ -43,6 +45,7 @@ public class RequestBuilder {
     public Request getRequest(){
         request = new Request(new RequestIdGenerator(10));
         request.setTenantEmail(tenantEmail);
+        request.setManagerEmail(managerEmail);
         request.setAsset(asset);
         request.setDescription(description);
         request.setCategory(category);
