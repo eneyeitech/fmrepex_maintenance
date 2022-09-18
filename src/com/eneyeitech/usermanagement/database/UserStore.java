@@ -20,7 +20,7 @@ public class UserStore extends StoreInstance{
         return instance;
     }
 
-    public Map<String, User> getStore(){
+    public ConcurrentHashMap<String, User> getStore(){
         return store;
     }
 }

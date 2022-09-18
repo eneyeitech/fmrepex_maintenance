@@ -20,7 +20,7 @@ public class BuildingStore extends StoreInstance {
         return instance;
     }
 
-    public Map<String, Building> getStore(){
+    public ConcurrentHashMap<String, Building> getStore(){
         return store;
     }
 }

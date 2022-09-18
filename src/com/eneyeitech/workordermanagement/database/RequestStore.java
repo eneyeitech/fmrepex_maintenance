@@ -1,6 +1,5 @@
-package com.eneyeitech.requestmanagement.database;
+package com.eneyeitech.workordermanagement.database;
 
-import com.eneyeitech.requestmanagement.database.StoreInstance;
 import com.eneyeitech.requestmanagement.business.Request;
 
 import java.util.List;
