@@ -16,9 +16,11 @@ import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.presentation.*;
 import com.eneyeitech.workordermanagement.business.WORequestService;
+import com.eneyeitech.workordermanagement.business.WorkOrderService;
 import com.eneyeitech.workordermanagement.persistence.StoreRequestDAO;
 import com.eneyeitech.workordermanagement.presentation.RequestManagerConsole;
 import com.eneyeitech.workordermanagement.presentation.WORequestConsole;
+import com.eneyeitech.workordermanagement.presentation.WorkOrderConsole;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +31,7 @@ public class Main {
     private static  BuildingService buildingService;
     private static RequestService requestService;
     private static WORequestService woRequestService;
+    private static WorkOrderService workOrderService;
     private static Scanner scanner;
     public static void main(String[] args){
         System.out.println("FMRepEx!");
@@ -40,6 +43,7 @@ public class Main {
         buildingService = new BuildingService();
         requestService = new RequestService();
         woRequestService = new WORequestService(requestService);
+        workOrderService = new WorkOrderService();
         // Adding admin as first entry
         User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
         String e = "admin@gmail.com";
@@ -75,11 +79,12 @@ public class Main {
         //main.userChoice(userConsole);
         BuildingConsole buildingConsole = new BuildingConsole(scanner, buildingService);
         RequestConsole requestConsole = new RequestConsole(scanner, requestService);
+        WorkOrderConsole workOrderConsole = new WorkOrderConsole(scanner, workOrderService);
         WORequestConsole woRequestConsole = new WORequestConsole(scanner, requestService, woRequestService);
         int v = 0;
         while(true){
-            main.showMessage(main.woRequestOptions());
-            main.woRequestChoice(woRequestConsole);
+            main.showMessage(main.workOrderOptions());
+            main.workOrderChoice(workOrderConsole);
         }
 
 
@@ -172,6 +177,16 @@ public class Main {
                 "2. Show requests\n" +
                 "3. Get request\n" +
                 "4. Remove request\n" +
+                "0. Exit\n" +
+                "";
+    }
+
+    public String workOrderOptions(){
+        return "" +
+                "1. Create Work Order\n" +
+                "2. Show Work Orders\n" +
+                "3. Get Work Order\n" +
+                "4. Remove Work Order\n" +
                 "0. Exit\n" +
                 "";
     }
@@ -302,6 +317,28 @@ public class Main {
                 break;
             case 4:
                 requestConsole.removeRequest();
+                break;
+            case 0:
+                System.out.println("Bye!");
+                System.exit(0);
+            default:
+        }
+    }
+
+    public void workOrderChoice(WorkOrderConsole workOrderConsole){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                workOrderConsole.newWorkOrder();
+                break;
+            case 2:
+                workOrderConsole.listWorkOrders();
+                break;
+            case 3:
+                workOrderConsole.getWorkOrder();
+                break;
+            case 4:
+                workOrderConsole.removeWorkOrder();
                 break;
             case 0:
                 System.out.println("Bye!");

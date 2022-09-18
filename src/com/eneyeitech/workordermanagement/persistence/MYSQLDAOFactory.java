@@ -34,4 +34,9 @@ public class MYSQLDAOFactory extends DAOFactory {
     public DAO getRequestDAO() {
         return new MYSQLRequestDAO();
     }
+
+    @Override
+    public DAO getWorkOrderDAO() {
+        return new MYSQLWorkOrderDAO();
+    }
 }

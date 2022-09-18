@@ -12,7 +12,7 @@ public abstract class DAOFactory {
     // implement these methods.
 
     public abstract DAO getRequestDAO();
-
+    public abstract DAO getWorkOrderDAO();
 
     public static DAOFactory getDAOFactory(int whichFactory) {
         switch (whichFactory) {

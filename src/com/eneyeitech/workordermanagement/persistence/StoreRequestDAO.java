@@ -110,7 +110,7 @@ public class StoreRequestDAO extends DAO<Request> {
         List<Request> list;
         if(store.containsKey(managerEmail)){
             list = new ArrayList<>(store.get(managerEmail));
-            Collections.sort(list, (o1, o2) -> o1.getCreatedDateTime().toLocalDate().compareTo(o2.getCreatedDateTime().toLocalDate()));
+            Collections.sort(list, (o1, o2) -> o2.getCreatedDateTime().toLocalDate().compareTo(o1.getCreatedDateTime().toLocalDate()));
             return list;
         }
         list = new ArrayList<>();

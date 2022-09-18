@@ -8,5 +8,5 @@ public interface ICrudService<T> {
     boolean update(T t);
     T get(String id);
     List<T> getAll();
-    List<T> getAll(String tenantEmail);
+    List<T> getAll(String email);
 }

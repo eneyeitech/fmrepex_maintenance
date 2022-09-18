@@ -14,7 +14,7 @@ public abstract class DAO<T> {
 
     abstract public T get(String id);
     abstract  public List<T> getAll();
-    abstract  public List<T> getAll(String tenantEmail);
+    abstract  public List<T> getAll(String email);
     abstract public boolean update(T t);
     abstract public void clear();
     abstract public void createTable() throws TableException;

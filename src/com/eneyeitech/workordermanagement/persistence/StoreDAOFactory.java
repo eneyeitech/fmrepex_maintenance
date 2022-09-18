@@ -13,4 +13,9 @@ public class StoreDAOFactory extends DAOFactory {
     public DAO getRequestDAO() {
         return new StoreRequestDAO();
     }
+
+    @Override
+    public DAO getWorkOrderDAO() {
+        return new StoreWorkOrderDAO();
+    }
 }

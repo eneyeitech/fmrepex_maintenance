@@ -26,7 +26,7 @@ public class RequestBuilder {
     public RequestBuilder(Scanner scanner){
         this.scanner = scanner;
         tenantEmail = getString("Enter tenant email: ");
-        managerEmail = getString("Enter manager email");
+        managerEmail = getString("Enter manager email: ");
         asset = getString("Enter asset needing maintenance (bulb, tap etc...): ");
         description = getString("Enter brief description of problem: ");
 
