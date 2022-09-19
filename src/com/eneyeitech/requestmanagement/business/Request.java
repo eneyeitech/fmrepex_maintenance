@@ -16,7 +16,9 @@ public class Request {
     private String managerEmail = null;
 
     private String flatLabel = null;
+    private String workOrderId = null;
 
+    private boolean signedOff = false;
     {
         setStatus(Status.PENDING);
     }
@@ -125,6 +127,26 @@ public class Request {
         return flatLabel != null;
     }
 
+    public boolean isSignedOff() {
+        return signedOff;
+    }
+
+    public void setSignedOff(boolean signedOff) {
+        this.signedOff = signedOff;
+    }
+
+    public String getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public void setWorkOrderId(String workOrderId) {
+        this.workOrderId = workOrderId;
+    }
+
+    public boolean hasWorkOrderId(){
+        return workOrderId != null;
+    }
+
     @Override
     public String toString() {
         return "Request{" +
@@ -138,6 +160,7 @@ public class Request {
                 ", buildingId='" + buildingId + '\'' +
                 ", managerEmail='" + managerEmail + '\'' +
                 ", flatLabel='" + flatLabel + '\'' +
+                ", signedOff=" + signedOff +
                 '}';
     }
 }

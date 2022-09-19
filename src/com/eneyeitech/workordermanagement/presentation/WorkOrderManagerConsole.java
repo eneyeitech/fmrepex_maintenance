@@ -40,6 +40,10 @@ public class WorkOrderManagerConsole {
         if(requestToAssign == null){
             return null;
         }
+        if(requestToAssign.getStatus() != Status.PENDING){
+            System.out.println("Work Order for request exist");
+            return null;
+        }
         String technicianEmail = getString("Enter technician email: ");
         User technician = (User) userService.get(technicianEmail);
 
@@ -55,8 +59,9 @@ public class WorkOrderManagerConsole {
 
         if(added){
             requestToAssign.setStatus(Status.ACTIVE);
+            requestToAssign.setWorkOrderId(workOrderToAssign.getId());
             System.out.println(workOrderToAssign);
-            System.out.println("Work order added!");
+            System.out.println("Work order created!");
         } else {
             System.out.println("Work order already exist");
         }

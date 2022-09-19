@@ -41,6 +41,28 @@ public class WorkOrderTechnicianConsole {
         workOrder.setStatus(Status.ACTIVE);
     }
 
+    public void markWorkOrderAsComplete(){
+        if (!isTechnician()){
+            return;
+        }
+        showPrompt("Accept a work order");
+        WorkOrder workOrder = getWorkOrder();
+        if(workOrder == null){
+            return;
+        }
+        if(!assignedWorkOrder(workOrder)){
+            System.out.println("Technician not allowed");
+            return;
+        }
+        if(workOrder.getStatus()==Status.ACTIVE){
+
+            workOrder.setStatus(Status.COMPLETED);
+            workOrder.getRequest().setStatus(com.eneyeitech.requestmanagement.business.Status.COMPLETED);
+        }else{
+            System.out.println("Cannot mark work order as complete");
+        }
+    }
+
     public void getWorkOrderStatus(){
         WorkOrder workOrder = getWorkOrder();
         if(workOrder == null){

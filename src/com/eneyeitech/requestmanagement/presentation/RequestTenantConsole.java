@@ -3,6 +3,7 @@ package com.eneyeitech.requestmanagement.presentation;
 import com.eneyeitech.buildingmanagement.business.BuildingService;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
+import com.eneyeitech.requestmanagement.business.Status;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
@@ -78,6 +79,18 @@ public class RequestTenantConsole {
             }
         }
         return request;
+    }
+
+    public void signOffRequest(){
+        Request request = getRequest();
+        if(request == null){
+            return;
+        }
+        if(request.getStatus() == Status.COMPLETED) {
+            request.setSignedOff(true);
+        }else{
+            System.out.println("Request cannot be signed off");
+        }
     }
 
     public void listRequests(){

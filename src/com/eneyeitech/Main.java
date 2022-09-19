@@ -9,6 +9,7 @@ import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.requestmanagement.database.RequestStore;
 import com.eneyeitech.requestmanagement.presentation.RequestConsole;
+import com.eneyeitech.requestmanagement.presentation.RequestDependantConsole;
 import com.eneyeitech.requestmanagement.presentation.RequestTenantConsole;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserFactory;
@@ -121,6 +122,12 @@ public class Main {
                 break;
             case DEPENDANT:
                 System.out.println(loggedInUser);
+                RequestDependantConsole requestDependantConsole = new RequestDependantConsole(scanner, userService, requestService, loggedInUser);
+                int q= 23;
+                do{
+                    main.showMessage(main.dependantOptions());
+                    q = main.dependantChoice(requestDependantConsole);
+                }while (q!= 0);
                 break;
             case MANAGER:
                 ManagerConsole managerConsole = new ManagerConsole(scanner, userService, loggedInUser);
@@ -203,6 +210,7 @@ public class Main {
                 "3. Accept Work Order\n" +
                 "4. View Status of a Work Order\n" +
                 "5. View accepted Work Orders\n" +
+                "6. Mark Work Order Complete\n" +
                 "0. Back\n" +
                 "";
     }
@@ -268,6 +276,16 @@ public class Main {
                 "4. Tenant details\n" +
                 "5. Make request\n" +
                 "6. View requests\n" +
+                "7. Sign off request\n" +
+                "0. Back\n" +
+                "";
+    }
+
+    public String dependantOptions(){
+        return "" +
+                "1. View requests\n" +
+                "2. View a request\n" +
+                "3. Sign off request\n" +
                 "0. Back\n" +
                 "";
     }
@@ -385,6 +403,28 @@ public class Main {
             case 5:
                 console.listAcceptedWorkOrders();
                 return 5;
+            case 6:
+                console.markWorkOrderAsComplete();
+                return 6;
+            case 0:
+                return 0;
+            default:
+                return 99;
+        }
+    }
+
+    public int dependantChoice(RequestDependantConsole console){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                console.listRequests();
+                return 1;
+            case 2:
+                console.getRequest();
+                return 1;
+            case 3:
+                console.signOffRequest();
+                return 2;
             case 0:
                 return 0;
             default:
@@ -552,6 +592,9 @@ public class Main {
             case 6:
                 tenantConsole.listRequests();
                 return 6;
+            case 7:
+                tenantConsole.signOffRequest();
+                return 7;
             case 0:
                 return 0;
             default:
