@@ -7,7 +7,6 @@ import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.business.user.Tenant;
-import com.eneyeitech.usermanagement.presentation.UserBuilder;
 
 import java.util.List;
 import java.util.Scanner;
@@ -148,7 +147,10 @@ public class BuildingManagerConsole {
             System.out.println("Tenant does not exist");
             return;
         }
-        if(!tenantCanBeAssignedToBuilding((Tenant) tenant)){
+        if(!isTenant(tenant)){
+            return;
+        }
+        if(!tenantCanBeAssignedToBuilding(tenant)){
             System.out.println("Tenant cannot be assigned");
             return;
         }
@@ -165,24 +167,33 @@ public class BuildingManagerConsole {
         }
     }
 
-    public boolean tenantIsAddedByManager(Tenant tenant){
-        if (tenant == null){
+    public boolean isTenant(User tenant){
+        if(tenant != null && tenant.getUserType() != UserType.TENANT){
+            System.out.println("User not a tenant or does not exist");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addedTenant(User tenant){
+        if(manager.getEmail() == ((Tenant) tenant).getManagerEmail()){
+            return true;
+        }
+        System.out.println("Tenant not added by manager");
+        return false;
+    }
+
+    public boolean hasNoBuilding(User tenant){
+        if(((Tenant)tenant).hasAnAssignedBuilding()){
+            System.out.println("Tenant has been assigned a building");
             return false;
         }
 
-        return (manager.getEmail().equalsIgnoreCase(tenant.getManagerEmail()));
+        return true;
     }
 
-    public boolean tenantIsNotAssignedABuildingAlready(Tenant tenant){
-        if (tenant == null){
-            return false;
-        }
-
-        return (tenant.getBuildingId() == null);
-    }
-
-    public boolean tenantCanBeAssignedToBuilding(Tenant tenant){
-        return (tenantIsAddedByManager(tenant) && tenantIsNotAssignedABuildingAlready(tenant));
+    public boolean tenantCanBeAssignedToBuilding(User tenant){
+        return (addedTenant(tenant) && hasNoBuilding(tenant));
     }
     public void deAssignTenant(){
         Building building = getBuilding();

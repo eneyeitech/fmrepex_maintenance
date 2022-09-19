@@ -6,6 +6,7 @@ import com.eneyeitech.buildingmanagement.presentation.BuildingBuilder;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -68,8 +69,9 @@ public class RequestConsole {
         }
         int i = 0;
         for(Request request:list){
-            //System.out.printf("%s: %s(%s) - %s.\n",++i, building.getName(), building.getState().toString(), building.getId());
-            System.out.printf("%s: %s.\n",++i,request);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            String formatDateTime = request.getCreatedDateTime().format(format);
+            System.out.printf("%s: (%s) %s(%s) - %s - %s - %s | %s.\n",++i, request.getId(), request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
         }
     }
 

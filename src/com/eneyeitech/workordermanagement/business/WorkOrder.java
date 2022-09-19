@@ -1,7 +1,6 @@
 package com.eneyeitech.workordermanagement.business;
 
 import com.eneyeitech.requestmanagement.business.Request;
-import com.eneyeitech.requestmanagement.helper.RequestIdGenerator;
 import com.eneyeitech.workordermanagement.helper.WorkOrderIdGenerator;
 
 import java.time.LocalDateTime;
@@ -101,7 +100,7 @@ public class WorkOrder {
         this.status = status;
     }
 
-    public boolean assignedTechnician(){
+    public boolean hasTechnician(){
         return technicianEmail != null;
     }
 

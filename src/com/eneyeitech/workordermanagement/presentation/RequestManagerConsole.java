@@ -72,7 +72,7 @@ public class RequestManagerConsole {
         for(Request request:list){
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             String formatDateTime = request.getCreatedDateTime().format(format);
-            System.out.printf("%s: %s(%s) - %s - %s - %s | %s.\n",++i, request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
+            System.out.printf("%s: (%s) %s(%s) - %s - %s - %s | %s.\n",++i, request.getId(), request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
         }
     }
 
@@ -88,7 +88,7 @@ public class RequestManagerConsole {
         for(Request request:list){
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             String formatDateTime = request.getCreatedDateTime().format(format);
-            System.out.printf("%s: %s(%s) - %s - %s - %s | %s.\n",++i, request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
+            System.out.printf("%s: (%s) %s(%s) - %s - %s - %s | %s.\n",++i, request.getId(), request.getAsset(), request.getCategory(), request.getStatus(),request.getTenantEmail(), request.getManagerEmail(), formatDateTime);
         }
     }
 

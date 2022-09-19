@@ -18,9 +18,7 @@ import com.eneyeitech.usermanagement.presentation.*;
 import com.eneyeitech.workordermanagement.business.WORequestService;
 import com.eneyeitech.workordermanagement.business.WorkOrderService;
 import com.eneyeitech.workordermanagement.persistence.StoreRequestDAO;
-import com.eneyeitech.workordermanagement.presentation.RequestManagerConsole;
-import com.eneyeitech.workordermanagement.presentation.WORequestConsole;
-import com.eneyeitech.workordermanagement.presentation.WorkOrderConsole;
+import com.eneyeitech.workordermanagement.presentation.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,6 +112,12 @@ public class Main {
                 break;
             case TECHNICIAN:
                 System.out.println(loggedInUser);
+                WorkOrderTechnicianConsole workOrderTechnicianConsole = new WorkOrderTechnicianConsole(scanner, workOrderService, loggedInUser);
+                int t= 23;
+                do{
+                    main.showMessage(main.technicianOptions());
+                    t = main.technicianChoice(workOrderTechnicianConsole);
+                }while (t!= 0);
                 break;
             case DEPENDANT:
                 System.out.println(loggedInUser);
@@ -122,10 +126,11 @@ public class Main {
                 ManagerConsole managerConsole = new ManagerConsole(scanner, userService, loggedInUser);
                 BuildingManagerConsole buildingManagerConsole = new BuildingManagerConsole(scanner, userService, buildingService, loggedInUser);
                 RequestManagerConsole requestManagerConsole = new RequestManagerConsole(scanner, userService, requestService, woRequestService, loggedInUser);
+                WorkOrderManagerConsole workOrderManagerConsole = new WorkOrderManagerConsole(scanner, userService, workOrderService, requestService, woRequestService, loggedInUser);
                 int i= 23;
                 do{
                     main.showMessage(main.managerOptions());
-                    i = main.managerChoice(managerConsole, buildingManagerConsole, requestManagerConsole);
+                    i = main.managerChoice(managerConsole, buildingManagerConsole, requestManagerConsole, workOrderManagerConsole);
                 }while (i!= 0);
                 break;
             case TENANT:
@@ -191,6 +196,17 @@ public class Main {
                 "";
     }
 
+    public String technicianOptions(){
+        return "" +
+                "1. View Work Orders\n" +
+                "2. View Work Order\n" +
+                "3. Accept Work Order\n" +
+                "4. View Status of a Work Order\n" +
+                "5. View accepted Work Orders\n" +
+                "0. Back\n" +
+                "";
+    }
+
     public String woRequestOptions(){
         return "" +
                 "1. Add Request\n" +
@@ -236,6 +252,10 @@ public class Main {
                 "14. List tenants request\n" +
                 "15. List all request\n" +
                 "16. View Request\n" +
+                "17. Create Work Order\n" +
+                "18. List Work Orders\n" +
+                "19. View Work Order\n" +
+                "20. View Accepted Work Orders\n" +
                 "0. Back\n" +
                 "";
     }
@@ -347,6 +367,31 @@ public class Main {
         }
     }
 
+    public int technicianChoice(WorkOrderTechnicianConsole console){
+        int selection = getNumber();
+        switch (selection){
+            case 1:
+                console.listWorkOrders();
+                return 1;
+            case 2:
+                console.getWorkOrder();
+                return 2;
+            case 3:
+                console.acceptWorkOrder();
+                return 3;
+            case 4:
+                console.getWorkOrderStatus();
+                return 4;
+            case 5:
+                console.listAcceptedWorkOrders();
+                return 5;
+            case 0:
+                return 0;
+            default:
+                return 99;
+        }
+    }
+
     public void woRequestChoice(WORequestConsole woRequestConsole){
         int selection = getNumber();
         switch (selection){
@@ -413,7 +458,7 @@ public class Main {
         }
     }
 
-    public int managerChoice(ManagerConsole console, BuildingManagerConsole managerConsole, RequestManagerConsole requestManagerConsole){
+    public int managerChoice(ManagerConsole console, BuildingManagerConsole managerConsole, RequestManagerConsole requestManagerConsole, WorkOrderManagerConsole workOrderManagerConsole){
 
         int selection = getNumber();
         switch (selection){
@@ -464,6 +509,18 @@ public class Main {
                 return 9;
             case 16:
                 requestManagerConsole.getRequest();
+                return 10;
+            case 17:
+                workOrderManagerConsole.createWorkOrder();
+                return 10;
+            case 18:
+                workOrderManagerConsole.listWorkOrders();
+                return 10;
+            case 19:
+                workOrderManagerConsole.getWorkOrder();
+                return 10;
+            case 20:
+                workOrderManagerConsole.listAcceptedWorkOrders();
                 return 10;
             case 0:
                 return 0;

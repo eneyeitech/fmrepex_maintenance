@@ -38,8 +38,8 @@ public class WorkOrderConsole {
 
     public void removeWorkOrder(){
         showPrompt("Remove a work order");
-        String requestId = getWorkOrderId();
-        boolean removed = workOrderService.remove(requestId);
+        String workOrderId = getWorkOrderId();
+        boolean removed = workOrderService.remove(workOrderId);
         if(removed){
             System.out.println("Work order removed!");
         } else {
@@ -70,7 +70,7 @@ public class WorkOrderConsole {
         }
         int i = 0;
         for(WorkOrder workOrder:list){
-            System.out.printf("%s: %s.\n",++i,workOrder);
+            System.out.printf("%s: (%s) %s - %s.\n", ++i, workOrder.getId(), workOrder.getRequest().getAsset(), workOrder.getCreatedDateTime());
         }
     }
 
