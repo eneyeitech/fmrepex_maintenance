@@ -1,28 +1,23 @@
 package com.eneyeitech;
 
+import com.eneyeitech.authentication.*;
 import com.eneyeitech.buildingmanagement.business.BuildingService;
-import com.eneyeitech.buildingmanagement.database.StoreInstance;
-import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
 import com.eneyeitech.buildingmanagement.presentation.BuildingConsole;
 import com.eneyeitech.buildingmanagement.presentation.BuildingManagerConsole;
-import com.eneyeitech.requestmanagement.business.Request;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.UserCommand;
 import com.eneyeitech.requestmanagement.business.RequestService;
-import com.eneyeitech.requestmanagement.database.RequestStore;
 import com.eneyeitech.requestmanagement.presentation.RequestConsole;
 import com.eneyeitech.requestmanagement.presentation.RequestDependantConsole;
 import com.eneyeitech.requestmanagement.presentation.RequestTenantConsole;
-import com.eneyeitech.usermanagement.business.User;
-import com.eneyeitech.usermanagement.business.UserFactory;
-import com.eneyeitech.usermanagement.business.UserService;
-import com.eneyeitech.usermanagement.business.UserType;
+import com.eneyeitech.usermanagement.business.*;
+import com.eneyeitech.usermanagement.business.user.YetToLogin;
 import com.eneyeitech.usermanagement.presentation.*;
 import com.eneyeitech.workordermanagement.business.WORequestService;
 import com.eneyeitech.workordermanagement.business.WorkOrderService;
-import com.eneyeitech.workordermanagement.persistence.StoreRequestDAO;
 import com.eneyeitech.workordermanagement.presentation.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Main {
@@ -50,8 +45,38 @@ public class Main {
         admin.setEmail(e);
         admin.setPhoneNumber("08051185104");
         admin.setPassword("pxstar");
-        userService.add(admin);
+        //userService.add(admin);
         System.out.println(admin);
+        UserManagement registerManager = new Registration(admin, userService);
+        new SecurityMonitor(registerManager);
+        new GeneralLogger(registerManager);
+        new EmailNotifier(registerManager);
+        registerManager.handle();
+
+        UserManagement loginManager = new Login(new YetToLogin("admin@gmail.com", "pxstar"), userService);
+        new SecurityMonitor(loginManager);
+        new GeneralLogger(loginManager);
+        new EmailNotifier(loginManager);
+
+        User u = loginManager.handle();
+        System.out.println(u);
+
+        User manager = UserFactory.getUser(UserType.TENANT);
+        manager.setEmail("m@gmail.com");
+        manager.setPassword("m");
+        manager.setFullName("Manager");
+        manager.setPhoneNumber("09090909");
+
+        User tenant = UserFactory.getUser(UserType.DEPENDANT);
+        tenant.setEmail("t@gmail.com");
+        tenant.setPassword("t");
+        tenant.setFullName("tenant");
+        tenant.setPhoneNumber("09090909");
+
+        Command command = new UserCommand(manager, tenant, userService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
+
 
 
 

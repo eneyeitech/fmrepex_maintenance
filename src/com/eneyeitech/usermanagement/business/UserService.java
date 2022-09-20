@@ -34,6 +34,9 @@ public class UserService {
     public Object getAll(){
         return userDao.getAll();
     }
+    public boolean exists(String id){
+        return get(id) != null;
+    }
 
     public boolean addTenantToManager(User manager, User tenant){
         if(manager.getUserType()!=UserType.MANAGER){

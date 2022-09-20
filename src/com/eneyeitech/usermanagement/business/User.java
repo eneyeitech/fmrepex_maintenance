@@ -7,6 +7,7 @@ public abstract class User {
     private String password;
     private UserType userType;
     private boolean approved = false;
+    private boolean verified = false;
 
     public User() {
     }
@@ -59,6 +60,14 @@ public abstract class User {
         this.approved = approved;
     }
 
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -68,6 +77,7 @@ public abstract class User {
                 ", password='" + password + '\'' +
                 ", userType=" + userType +
                 ", approved=" + approved +
+                ", verified=" + verified +
                 '}';
     }
 }
