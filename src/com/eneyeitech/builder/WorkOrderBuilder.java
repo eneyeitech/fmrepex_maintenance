@@ -1,4 +1,4 @@
-package com.eneyeitech.workordermanagement.presentation;
+package com.eneyeitech.builder;
 
 import com.eneyeitech.workordermanagement.business.WorkOrder;
 import com.eneyeitech.workordermanagement.helper.WorkOrderIdGenerator;
@@ -31,7 +31,9 @@ public class WorkOrderBuilder {
     }
 
     public WorkOrder getWorkOrder(){
-        workOrder = new WorkOrder(new WorkOrderIdGenerator(10));
+        //workOrder = new WorkOrder(new WorkOrderIdGenerator(10));
+        workOrder = new WorkOrder();
+
         workOrder.setTechnicianEmail(technicianEmail);
         workOrder.setDescription(description);
         workOrder.setCreatedDateTime(LocalDateTime.now());

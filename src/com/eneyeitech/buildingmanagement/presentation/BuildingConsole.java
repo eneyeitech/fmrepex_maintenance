@@ -1,9 +1,9 @@
 package com.eneyeitech.buildingmanagement.presentation;
 
+import com.eneyeitech.builder.BuildingBuilder;
 import com.eneyeitech.buildingmanagement.business.Building;
 import com.eneyeitech.buildingmanagement.business.BuildingService;
 import com.eneyeitech.buildingmanagement.business.ManagedBuilding;
-import com.eneyeitech.usermanagement.business.User;
 
 import java.util.List;
 import java.util.Scanner;

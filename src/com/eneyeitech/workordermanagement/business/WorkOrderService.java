@@ -18,7 +18,11 @@ public class WorkOrderService implements ICrudService<WorkOrder>{
 
     @Override
     public boolean add(WorkOrder workOrder) {
-        return workOrderDAO.add(workOrder);
+        if(workOrder.hasId()){
+            return update(workOrder);
+        }else {
+            return workOrderDAO.add(workOrder);
+        }
     }
 
     @Override

@@ -1,12 +1,15 @@
-package com.eneyeitech.usermanagement.presentation;
+package com.eneyeitech.builder;
 
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserFactory;
+import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class UserBuilder {
+    private UserService userService;
     private Scanner scanner;
     private String email;
     private String phoneNumber;
@@ -29,6 +32,18 @@ public class UserBuilder {
         phoneNumber = getString("Enter phone number: ");
         password = getString("Enter password: ");
         type = getType();
+    }
+
+    public UserBuilder(UserService userService){
+        this.userService = userService;
+    }
+
+    public User queryUser(String email){
+        return (User) userService.get(email);
+    }
+
+    public List<User> queryUsers(){
+        return (List<User>) userService.getAll();
     }
 
     private String getString(String msg){

@@ -1,8 +1,11 @@
 package com.eneyeitech.buildingmanagement.presentation;
 
+import com.eneyeitech.builder.BuildingBuilder;
 import com.eneyeitech.buildingmanagement.business.Building;
 import com.eneyeitech.buildingmanagement.business.BuildingService;
 import com.eneyeitech.buildingmanagement.business.ManagedBuilding;
+import com.eneyeitech.command.BuildingCommand;
+import com.eneyeitech.command.Command;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
@@ -25,20 +28,13 @@ public class BuildingManagerConsole {
     }
 
     public Building addBuilding(){
-        if(!isManagerAndApproved()){
-            return null;
-        }
         showPrompt("Add new building");
         BuildingBuilder buildingBuilder = new BuildingBuilder(scanner);
         ManagedBuilding newBuilding = (ManagedBuilding) buildingBuilder.getBuilding();
         newBuilding.setManagerEmail(manager.getEmail());
-        boolean added = buildingService.add(newBuilding);
-        if(added){
-            System.out.println("Building added!");
-        } else {
-
-            System.out.println("Building already exist");
-        }
+        Command command = new BuildingCommand(manager, null, newBuilding, buildingService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
         return newBuilding;
     }
 
@@ -136,35 +132,19 @@ public class BuildingManagerConsole {
 
     public void assignTenant(){
         Building building = getBuilding();
-        if(building == null){
-            System.out.println("Unauthorized action");
-            return;
-        }
         String flatLabel = getFlatNoOrLabel();
         String tenantEmail = getTenantEmail();
         User tenant = (User) userService.get(tenantEmail);
-        if(tenant == null){
-            System.out.println("Tenant does not exist");
-            return;
-        }
-        if(!isTenant(tenant)){
-            return;
-        }
-        if(!tenantCanBeAssignedToBuilding(tenant)){
-            System.out.println("Tenant cannot be assigned");
-            return;
-        }
 
-        boolean assigned = buildingService.assignTenantToBuilding(building, tenant);
-        if(assigned){
-            ((Tenant) tenant).setFlatNoOrLabel(flatLabel);
-            userService.update(tenant);
-            buildingService.update(building);
-            System.out.println("Tenant assigned to building!");
-
+        if(tenant != null && building != null && tenant.getUserType()==UserType.TENANT){
+            ((Tenant)tenant).setFlatNoOrLabel(flatLabel);
+            Command command = new BuildingCommand(manager, tenant,building, buildingService);
+            new com.eneyeitech.command.EmailNotifier(command);
+            command.actionRequester();
         } else {
-            System.out.println("Error occurred assigning tenant");
+            showPrompt("Error assigning tenant");
         }
+
     }
 
     public boolean isTenant(User tenant){

@@ -1,5 +1,6 @@
 package com.eneyeitech.requestmanagement.business;
 
+import com.eneyeitech.constant.Action;
 import com.eneyeitech.requestmanagement.persistence.DAO;
 import com.eneyeitech.requestmanagement.persistence.DAOFactory;
 
@@ -20,10 +21,25 @@ public class RequestService implements ICrudService<Request>, ISubject{
 
     @Override
     public boolean add(Request request) {
-        boolean added = requestDAO.add(request);
+        System.out.println("WEeeeeeeeeeeeeee");
+        boolean added;
+        added = requestDAO.add(request);
         if(added && observerList.size()==1){
             notifyObservers(request, null, Action.ADD);
         }
+        /**if(request.hasId()){
+            added = update(request);
+            if(added && observerList.size()==1){
+                notifyObservers(request, null, Action.UPDATE);
+            }
+        } else {
+            added = requestDAO.add(request);
+            if(added && observerList.size()==1){
+                notifyObservers(request, null, Action.ADD);
+            }
+        }*/
+
+
         return added;
     }
 

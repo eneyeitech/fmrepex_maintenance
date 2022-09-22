@@ -1,13 +1,13 @@
 package com.eneyeitech.requestmanagement.presentation;
 
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.RequestCommand;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
-import com.eneyeitech.requestmanagement.business.Status;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.business.user.Dependant;
-import com.eneyeitech.usermanagement.business.user.Tenant;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -66,11 +66,9 @@ public class RequestDependantConsole {
         if(request == null){
             return;
         }
-        if(request.getStatus() == Status.COMPLETED) {
-            request.setSignedOff(true);
-        }else{
-            System.out.println("Request cannot be signed off");
-        }
+        Command command = new RequestCommand(dependant, request, requestService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     private String getString(String msg){

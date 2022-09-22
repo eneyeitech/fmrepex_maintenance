@@ -3,11 +3,19 @@ package com.eneyeitech.requestmanagement.persistence;
 
 
 import com.eneyeitech.requestmanagement.exception.TableException;
+import com.eneyeitech.requestmanagement.helper.RequestIdGenerator;
 
 import java.util.List;
 import java.util.Map;
 
 public abstract class DAO<T> {
+
+    protected RequestIdGenerator requestIdGenerator;
+
+    public DAO(){
+        requestIdGenerator = new RequestIdGenerator(10);
+    }
+
     protected Map<String, List<T>> store;
     abstract public boolean add(T t);
     abstract public boolean remove(String id);

@@ -45,6 +45,13 @@ public class StoreRequestDAO extends DAO<Request> {
 
     @Override
     public boolean add(Request request) {
+        if(request.hasId()){
+         //   return update(request);
+            System.out.println("WO Store Request DAO");
+        }
+        System.out.println("WO Store Request DAO 2");
+        request.setId(requestIdGenerator.generate());
+
         String managerEmail = request.getManagerEmail();
         List<Request> requests;
         List<Request> requestsInStore;

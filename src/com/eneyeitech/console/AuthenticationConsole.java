@@ -1,20 +1,50 @@
-package com.eneyeitech.usermanagement.presentation;
+package com.eneyeitech.console;
 
 import com.eneyeitech.authentication.*;
 import com.eneyeitech.builder.UserBuilder;
-import com.eneyeitech.usermanagement.business.*;
+import com.eneyeitech.usermanagement.business.User;
+import com.eneyeitech.usermanagement.business.UserService;
+import com.eneyeitech.usermanagement.business.UserType;
 import com.eneyeitech.usermanagement.business.user.YetToLogin;
 
 import java.util.Scanner;
 
-public class AuthenticationConsole {
+public class AuthenticationConsole extends Console{
 
-    private Scanner scanner;
     private UserService userService;
+    public AuthenticationConsole(Scanner scanner, User user){
+        super(scanner, user);
+        userService = new UserService();
+    }
+    @Override
+    public void menuDisplay() {
+        System.out.println(menu());
+    }
 
-    public AuthenticationConsole(Scanner scanner, UserService userService){
-        this.scanner = scanner;
-        this.userService = userService;
+    public String menu(){
+        return "" +
+                "1. Login\n" +
+                "2. Manager Sign-up\n" +
+                "0. Exit\n" +
+                "";
+    }
+
+    @Override
+    public int handleSelection() {
+        return 0;
+    }
+
+    public User handle(){
+        int selection = getSelectedNumber();
+        switch (selection){
+            case 1:
+                return loginUser();
+            case 2:
+               managerSignup();
+            case 0:
+            default:
+                return null;
+        }
     }
 
     public void managerSignup(){
@@ -22,7 +52,7 @@ public class AuthenticationConsole {
         String type = UserType.MANAGER.toString();
         UserBuilder userBuilder = new UserBuilder(scanner);
         User newUser = userBuilder.getUser(type);
-        //boolean added = userService.add(newUser);
+
         UserManagement registerManager = new Registration(newUser, userService);
         new EmailNotifier(registerManager);
         User user = registerManager.handle();
@@ -40,8 +70,6 @@ public class AuthenticationConsole {
         String email = getEmail("Enter email: ");
         String password = getPassword("Enter password: ");
 
-        //AuthenticationService authenticationService = new AuthenticationService(userService);
-        //User user = authenticationService.login(email, password);
         UserManagement loginManager = new Login(new YetToLogin(email, password), userService);
         new SecurityMonitor(loginManager);
         new GeneralLogger(loginManager);
@@ -66,45 +94,9 @@ public class AuthenticationConsole {
         return email;
     }
 
-    private String getPhoneNumber(String msg){
-        showPrompt(msg);
-        String phone = scanner.nextLine();
-        return phone;
-    }
-
-    private String getFullName(String msg){
-        showPrompt(msg);
-        String name = scanner.nextLine();
-        return name;
-    }
-
     private String getPassword(String msg){
         showPrompt(msg);
         String password = scanner.nextLine();
         return password;
-    }
-
-    private String getString(String msg){
-        showPrompt(msg);
-        return scanner.nextLine();
-    }
-
-    private String getType(){
-        showPrompt("Enter one of the following admin|tenant|dependant|manager|technician");
-        String type = scanner.nextLine();
-        switch (type){
-            case "admin":
-                return UserType.ADMINISTRATOR.name();
-            case "tenant":
-                return UserType.TENANT.name();
-            case "dependant":
-                return UserType.DEPENDANT.name();
-            case "manager":
-                return UserType.MANAGER.name();
-            case "technician":
-                return UserType.TECHNICIAN.name();
-            default:
-                return "";
-        }
     }
 }

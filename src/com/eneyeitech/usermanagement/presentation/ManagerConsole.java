@@ -1,5 +1,8 @@
 package com.eneyeitech.usermanagement.presentation;
 
+import com.eneyeitech.builder.UserBuilder;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.UserCommand;
 import com.eneyeitech.usermanagement.business.*;
 import com.eneyeitech.usermanagement.business.user.Manager;
 import com.eneyeitech.usermanagement.business.user.Technician;
@@ -32,27 +35,13 @@ public class ManagerConsole {
         return manager.isApproved();
     }
     public void addTenant(){
-        boolean isManager = isManager();
-        if(!isManager){
-            return;
-        }
-        if(!isApproved()){
-            System.out.println("Manager not yet approved.");
-            return;
-        }
         showPrompt("Add Tenant");
         String type = UserType.TENANT.toString();
         UserBuilder userBuilder = new UserBuilder(scanner);
         User newUser = userBuilder.getUser(type);
-        boolean added = userService.add(newUser);
-        if(added){
-            userService.addTenantToManager(manager, newUser);
-            userService.add(manager);
-            System.out.println("Tenant added!");
-
-        } else {
-            System.out.println("User exist");
-        }
+        Command command = new UserCommand(manager, newUser, userService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void removeTenant(){
@@ -85,27 +74,13 @@ public class ManagerConsole {
     }
 
     public void addTechnician(){
-        boolean isManager = isManager();
-        if(!isManager){
-            return;
-        }
-        if(!isApproved()){
-            System.out.println("Manager not yet approved.");
-            return;
-        }
         showPrompt("Add Technician");
         String type = UserType.TECHNICIAN.toString();
         UserBuilder userBuilder = new UserBuilder(scanner);
         User newUser = userBuilder.getUser(type);
-        boolean added = userService.add(newUser);
-        if(added){
-            userService.addTechnicianToManager(manager, newUser);
-            userService.add(manager);
-            System.out.println("Technician added!");
-
-        } else {
-            System.out.println("User exist");
-        }
+        Command command = new UserCommand(manager, newUser, userService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void removeTechnician(){
@@ -176,7 +151,6 @@ public class ManagerConsole {
         showPrompt(msg);
         return scanner.nextLine();
     }
-
     private String getType(){
         showPrompt("Enter one of the following admin|tenant|dependant|manager|technician");
         String type = scanner.nextLine();

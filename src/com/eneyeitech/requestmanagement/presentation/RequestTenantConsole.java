@@ -1,9 +1,10 @@
 package com.eneyeitech.requestmanagement.presentation;
 
-import com.eneyeitech.buildingmanagement.business.BuildingService;
+import com.eneyeitech.builder.AuthorisedRequestBuilder;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.RequestCommand;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
-import com.eneyeitech.requestmanagement.business.Status;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
@@ -27,10 +28,6 @@ public class RequestTenantConsole {
     }
 
     public Request newRequest(){
-        if(!canMakeRequest()){
-            System.out.println("New request:: not authorised");
-            return null;
-        }
         showPrompt("Add new request");
         AuthorisedRequestBuilder requestBuilder = new AuthorisedRequestBuilder(scanner);
         Request requestToAdd = requestBuilder.getRequest();
@@ -38,15 +35,10 @@ public class RequestTenantConsole {
         requestToAdd.setBuildingId(((Tenant)tenant).getBuildingId());
         requestToAdd.setManagerEmail(((Tenant)tenant).getManagerEmail());
         requestToAdd.setFlatLabel(((Tenant)tenant).getFlatNoOrLabel());
-        boolean added = requestService.add(requestToAdd);
-        if(added){
-            System.out.println(requestToAdd);
-            System.out.println("Request added!");
-        } else {
-            System.out.println("Request already exist");
-        }
+        Command command = new RequestCommand(tenant, requestToAdd,requestService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
         return requestToAdd;
-
     }
 
     public void removeRequest(){
@@ -86,11 +78,9 @@ public class RequestTenantConsole {
         if(request == null){
             return;
         }
-        if(request.getStatus() == Status.COMPLETED) {
-            request.setSignedOff(true);
-        }else{
-            System.out.println("Request cannot be signed off");
-        }
+        Command command = new RequestCommand(tenant, request, requestService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void listRequests(){

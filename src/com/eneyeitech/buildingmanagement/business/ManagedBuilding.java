@@ -12,7 +12,7 @@ public class ManagedBuilding extends Building {
     private List<Tenant> buildingOccupants;
 
     public ManagedBuilding(){
-
+        buildingOccupants = new ArrayList<>();
     }
 
     public ManagedBuilding(BuildingIdGenerator buildingIdGenerator){
@@ -46,7 +46,10 @@ public class ManagedBuilding extends Building {
 
     public boolean removeTenant(Tenant tenant){
         if(buildingOccupants.contains(tenant)){
-            return buildingOccupants.remove(tenant);
+            if(buildingOccupants.remove(tenant)){
+                tenant.setBuildingId(null);
+                tenant.setFlatNoOrLabel(null);
+            }
         }
         return false;
     }

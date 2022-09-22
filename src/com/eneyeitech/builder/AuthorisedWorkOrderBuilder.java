@@ -1,12 +1,15 @@
-package com.eneyeitech.workordermanagement.presentation;
+package com.eneyeitech.builder;
 
 import com.eneyeitech.workordermanagement.business.WorkOrder;
+import com.eneyeitech.workordermanagement.business.WorkOrderService;
 import com.eneyeitech.workordermanagement.helper.WorkOrderIdGenerator;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class AuthorisedWorkOrderBuilder {
+    private WorkOrderService workOrderService;
     private Scanner scanner;
     private WorkOrder workOrder;
     private String technicianEmail;
@@ -20,6 +23,22 @@ public class AuthorisedWorkOrderBuilder {
         description = getString("Enter brief work description (note to technician): ");
     }
 
+    public AuthorisedWorkOrderBuilder(WorkOrderService workOrderService){
+        this.workOrderService = workOrderService;
+    }
+
+    public WorkOrder queryWorkOrder(String workOrderId){
+        return workOrderService.get(workOrderId);
+    }
+
+    public List<WorkOrder> queryWorkOrders(){
+        return workOrderService.getAll();
+    }
+
+    public List<WorkOrder> queryWorkOrders(String technicianEmail){
+        return workOrderService.getAll(technicianEmail);
+    }
+
     private String getString(String msg){
         showPrompt(msg);
         return scanner.nextLine();
@@ -30,7 +49,9 @@ public class AuthorisedWorkOrderBuilder {
     }
 
     public WorkOrder getWorkOrder(){
-        workOrder = new WorkOrder(new WorkOrderIdGenerator(10));
+        //workOrder = new WorkOrder(new WorkOrderIdGenerator(10));
+        workOrder = new WorkOrder();
+
         workOrder.setDescription(description);
         workOrder.setCreatedDateTime(LocalDateTime.now());
         return workOrder;

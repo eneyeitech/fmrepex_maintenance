@@ -1,16 +1,17 @@
-package com.eneyeitech.buildingmanagement.presentation;
+package com.eneyeitech.builder;
 
-import com.eneyeitech.buildingmanagement.business.Address;
 import com.eneyeitech.buildingmanagement.business.Building;
-import com.eneyeitech.buildingmanagement.business.Coordinate;
+import com.eneyeitech.buildingmanagement.business.BuildingService;
 import com.eneyeitech.buildingmanagement.business.ManagedBuilding;
-import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
+import com.eneyeitech.usermanagement.business.user.Tenant;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class BuildingBuilder {
+    private BuildingService buildingService;
     private Scanner scanner;
     private Building building;
     private String name;
@@ -18,11 +19,32 @@ public class BuildingBuilder {
     private AddressBuilder addressBuilder;
     private CoordinateBuilder coordinateBuilder;
 
+    public BuildingBuilder(BuildingService buildingService){
+        this.buildingService = buildingService;
+    }
+
+    public Building queryBuilding(String buildingId){
+        return buildingService.get(buildingId);
+    }
+
+    public List<Building> queryBuildings(){
+        return buildingService.getAll();
+    }
+
+    public List<Tenant> queryBuildingTenants(String buildingId){
+        return buildingService.getOccupants(buildingId);
+    }
+
     public BuildingBuilder(Scanner scanner){
         this.scanner = scanner;
         showPrompt("##::Building::##");
         name = getString("Enter building name: ");
-        noOfFlats = Integer.parseInt(getString("Enter no of flats: "));
+
+        try {
+            noOfFlats = Integer.parseInt(getString("Enter no of flats: "));
+        }catch (NumberFormatException c){
+            noOfFlats = 1;
+        }
         addressBuilder = new AddressBuilder(scanner);
         coordinateBuilder = new CoordinateBuilder(scanner);
     }
@@ -51,7 +73,8 @@ public class BuildingBuilder {
     }
 
     public Building getBuilding(){
-        building = new ManagedBuilding(new BuildingIdGenerator(10));
+        //building = new ManagedBuilding(new BuildingIdGenerator(10));
+        building = new ManagedBuilding();
         building.setName(name);
         building.setNoOfFlats(noOfFlats);
         building.setAddress(addressBuilder.getAddress());

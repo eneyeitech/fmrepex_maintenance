@@ -100,4 +100,8 @@ public abstract class Building {
     public void setNoOfFlats(int noOfFlats) {
         this.noOfFlats = noOfFlats;
     }
+
+    public boolean hasId(){
+        return getId() != null;
+    }
 }

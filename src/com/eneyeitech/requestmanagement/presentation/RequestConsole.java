@@ -1,8 +1,6 @@
 package com.eneyeitech.requestmanagement.presentation;
 
-import com.eneyeitech.buildingmanagement.business.Building;
-import com.eneyeitech.buildingmanagement.business.ManagedBuilding;
-import com.eneyeitech.buildingmanagement.presentation.BuildingBuilder;
+import com.eneyeitech.builder.RequestBuilder;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
 

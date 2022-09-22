@@ -1,5 +1,6 @@
 package com.eneyeitech.workordermanagement.presentation;
 
+import com.eneyeitech.builder.RequestBuilder;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.workordermanagement.business.WORequestService;

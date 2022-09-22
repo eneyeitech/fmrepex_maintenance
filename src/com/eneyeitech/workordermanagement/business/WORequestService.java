@@ -1,7 +1,7 @@
 package com.eneyeitech.workordermanagement.business;
 
 
-import com.eneyeitech.requestmanagement.business.Action;
+import com.eneyeitech.constant.Action;
 import com.eneyeitech.requestmanagement.business.IObserver;
 import com.eneyeitech.requestmanagement.business.ISubject;
 import com.eneyeitech.requestmanagement.business.Request;
@@ -29,7 +29,7 @@ public class WORequestService implements ICrudService<Request>, IObserver {
 
     @Override
     public boolean add(Request request) {
-        return requestDAO.add(request);
+      return   requestDAO.add(request);
     }
 
     @Override
@@ -69,6 +69,7 @@ public class WORequestService implements ICrudService<Request>, IObserver {
                 System.out.println("REMOVE");
                 break;
             case UPDATE:
+                update(r);
                 System.out.println("UPDATE");
                 break;
             default:

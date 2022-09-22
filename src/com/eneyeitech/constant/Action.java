@@ -1,4 +1,4 @@
-package com.eneyeitech.requestmanagement.business;
+package com.eneyeitech.constant;
 
 public enum Action {
     ADD,

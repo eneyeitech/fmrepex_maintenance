@@ -1,12 +1,13 @@
 package com.eneyeitech.workordermanagement.business;
 
+import com.eneyeitech.constant.Status;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.workordermanagement.helper.WorkOrderIdGenerator;
 
 import java.time.LocalDateTime;
 
 public class WorkOrder {
-    private String id;
+    private String id = null;
     private Request request;
     private String technicianEmail;
     private LocalDateTime createdDateTime;
@@ -102,6 +103,10 @@ public class WorkOrder {
 
     public boolean hasTechnician(){
         return technicianEmail != null;
+    }
+
+    public boolean hasId(){
+        return getId() != null;
     }
 
     @Override

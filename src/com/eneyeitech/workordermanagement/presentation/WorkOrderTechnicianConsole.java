@@ -1,12 +1,10 @@
 package com.eneyeitech.workordermanagement.presentation;
 
-import com.eneyeitech.requestmanagement.business.RequestService;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.WorkOrderCommand;
+import com.eneyeitech.constant.Status;
 import com.eneyeitech.usermanagement.business.User;
-import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
-import com.eneyeitech.usermanagement.business.user.Technician;
-import com.eneyeitech.workordermanagement.business.Status;
-import com.eneyeitech.workordermanagement.business.WORequestService;
 import com.eneyeitech.workordermanagement.business.WorkOrder;
 import com.eneyeitech.workordermanagement.business.WorkOrderService;
 
@@ -26,41 +24,26 @@ public class WorkOrderTechnicianConsole {
     }
 
     public void acceptWorkOrder(){
-        if (!isTechnician()){
-            return;
-        }
         showPrompt("Accept a work order");
         WorkOrder workOrder = getWorkOrder();
         if(workOrder == null){
             return;
         }
-        if(!assignedWorkOrder(workOrder)){
-            System.out.println("Technician not allowed");
-            return;
-        }
-        workOrder.setStatus(Status.ACTIVE);
+        Command command = new WorkOrderCommand(technician, null, workOrder, workOrderService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void markWorkOrderAsComplete(){
-        if (!isTechnician()){
-            return;
-        }
         showPrompt("Accept a work order");
         WorkOrder workOrder = getWorkOrder();
         if(workOrder == null){
             return;
         }
-        if(!assignedWorkOrder(workOrder)){
-            System.out.println("Technician not allowed");
-            return;
-        }
-        if(workOrder.getStatus()==Status.ACTIVE){
 
-            workOrder.setStatus(Status.COMPLETED);
-            workOrder.getRequest().setStatus(com.eneyeitech.requestmanagement.business.Status.COMPLETED);
-        }else{
-            System.out.println("Cannot mark work order as complete");
-        }
+        Command command = new WorkOrderCommand(technician, null, workOrder, workOrderService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void getWorkOrderStatus(){
@@ -115,7 +98,7 @@ public class WorkOrderTechnicianConsole {
         list = workOrderService.getAll(technician.getEmail());
         int i = 0;
         for(WorkOrder workOrder:list){
-            if(workOrder.getStatus() == com.eneyeitech.workordermanagement.business.Status.ACTIVE) {
+            if(workOrder.getStatus() == Status.ACTIVE) {
                 DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
                 String formatDateTime = workOrder.getCreatedDateTime().format(format);
                 System.out.printf("%s: (%s) %s - %s.\n", ++i, workOrder.getId(), workOrder.getRequest().getAsset(), formatDateTime);

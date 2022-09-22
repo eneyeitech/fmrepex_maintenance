@@ -1,8 +1,11 @@
 package com.eneyeitech.workordermanagement.presentation;
 
+import com.eneyeitech.builder.AuthorisedWorkOrderBuilder;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.WorkOrderCommand;
+import com.eneyeitech.constant.Status;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.business.RequestService;
-import com.eneyeitech.requestmanagement.business.Status;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
@@ -31,40 +34,25 @@ public class WorkOrderManagerConsole {
     }
 
     public WorkOrder createWorkOrder(){
-        if(!isManagerAndApproved()){
-            return null;
-        }
         showPrompt("Create a new work order");
 
         Request requestToAssign = requestManagerConsole.getRequest();
         if(requestToAssign == null){
             return null;
         }
-        if(requestToAssign.getStatus() != Status.PENDING){
-            System.out.println("Work Order for request exist");
-            return null;
-        }
         String technicianEmail = getString("Enter technician email: ");
         User technician = (User) userService.get(technicianEmail);
 
-        if(!validTechnician(technician)){
+        if(technician == null){
             return null;
         }
-
         AuthorisedWorkOrderBuilder workOrderBuilder = new AuthorisedWorkOrderBuilder(scanner);
         WorkOrder workOrderToAssign = workOrderBuilder.getWorkOrder();
         workOrderToAssign.setRequest(requestToAssign);
         workOrderToAssign.setTechnicianEmail(technician.getEmail());
-        boolean added = workOrderService.add(workOrderToAssign);
-
-        if(added){
-            requestToAssign.setStatus(Status.ACTIVE);
-            requestToAssign.setWorkOrderId(workOrderToAssign.getId());
-            System.out.println(workOrderToAssign);
-            System.out.println("Work order created!");
-        } else {
-            System.out.println("Work order already exist");
-        }
+        Command command = new WorkOrderCommand(manager, technician, workOrderToAssign, workOrderService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
         return workOrderToAssign;
     }
 
@@ -119,7 +107,7 @@ public class WorkOrderManagerConsole {
         }
         int i = 0;
         for(WorkOrder workOrder:list){
-            if(workOrder.getStatus() == com.eneyeitech.workordermanagement.business.Status.ACTIVE) {
+            if(workOrder.getStatus() == Status.ACTIVE) {
                 DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
                 String formatDateTime = workOrder.getCreatedDateTime().format(format);
                 System.out.printf("%s: (%s) %s - %s.\n", ++i, workOrder.getId(), workOrder.getRequest().getAsset(), formatDateTime);

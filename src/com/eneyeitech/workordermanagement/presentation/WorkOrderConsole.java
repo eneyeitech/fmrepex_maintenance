@@ -1,7 +1,9 @@
 package com.eneyeitech.workordermanagement.presentation;
 
+import com.eneyeitech.builder.RequestBuilder;
+import com.eneyeitech.builder.WorkOrderBuilder;
 import com.eneyeitech.requestmanagement.business.Request;
-import com.eneyeitech.requestmanagement.business.Status;
+import com.eneyeitech.constant.Status;
 import com.eneyeitech.workordermanagement.business.WorkOrder;
 import com.eneyeitech.workordermanagement.business.WorkOrderService;
 

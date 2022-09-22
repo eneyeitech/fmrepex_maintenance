@@ -38,6 +38,7 @@ public class Main {
         requestService = new RequestService();
         woRequestService = new WORequestService(requestService);
         workOrderService = new WorkOrderService();
+
         // Adding admin as first entry
         User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
         String e = "admin@gmail.com";
@@ -45,47 +46,22 @@ public class Main {
         admin.setEmail(e);
         admin.setPhoneNumber("08051185104");
         admin.setPassword("pxstar");
-        //userService.add(admin);
+
         System.out.println(admin);
+
         UserManagement registerManager = new Registration(admin, userService);
         new SecurityMonitor(registerManager);
         new GeneralLogger(registerManager);
         new EmailNotifier(registerManager);
         registerManager.handle();
-
-        UserManagement loginManager = new Login(new YetToLogin("admin@gmail.com", "pxstar"), userService);
-        new SecurityMonitor(loginManager);
-        new GeneralLogger(loginManager);
-        new EmailNotifier(loginManager);
-
-        User u = loginManager.handle();
-        System.out.println(u);
-
-        User manager = UserFactory.getUser(UserType.TENANT);
-        manager.setEmail("m@gmail.com");
-        manager.setPassword("m");
-        manager.setFullName("Manager");
-        manager.setPhoneNumber("09090909");
-
-        User tenant = UserFactory.getUser(UserType.DEPENDANT);
-        tenant.setEmail("t@gmail.com");
-        tenant.setPassword("t");
-        tenant.setFullName("tenant");
-        tenant.setPhoneNumber("09090909");
-
-        Command command = new UserCommand(manager, tenant, userService);
-        new com.eneyeitech.command.EmailNotifier(command);
-        command.actionRequester();
-
-
-
-
+        com.eneyeitech.console.AuthenticationConsole authenticationConsole1 = new com.eneyeitech.console.AuthenticationConsole(scanner, null);
+        // Run main
         Main main = new Main();
         User loggedInUser = null;
         while (true) {
             do {
-                main.showMessage(main.loginOptions());
-                loggedInUser = main.loginChoice(authenticationConsole);
+                authenticationConsole1.menuDisplay();
+                loggedInUser = authenticationConsole1.handle();
             } while (loggedInUser == null);
 
 
@@ -155,14 +131,12 @@ public class Main {
                 }while (q!= 0);
                 break;
             case MANAGER:
-                ManagerConsole managerConsole = new ManagerConsole(scanner, userService, loggedInUser);
-                BuildingManagerConsole buildingManagerConsole = new BuildingManagerConsole(scanner, userService, buildingService, loggedInUser);
-                RequestManagerConsole requestManagerConsole = new RequestManagerConsole(scanner, userService, requestService, woRequestService, loggedInUser);
-                WorkOrderManagerConsole workOrderManagerConsole = new WorkOrderManagerConsole(scanner, userService, workOrderService, requestService, woRequestService, loggedInUser);
+                com.eneyeitech.console.ManagerConsole managerConsole1 = new com.eneyeitech.console.ManagerConsole(scanner, loggedInUser);
                 int i= 23;
                 do{
-                    main.showMessage(main.managerOptions());
-                    i = main.managerChoice(managerConsole, buildingManagerConsole, requestManagerConsole, workOrderManagerConsole);
+                    managerConsole1.menuDisplay();
+                    i = managerConsole1.handleSelection();
+
                 }while (i!= 0);
                 break;
             case TENANT:

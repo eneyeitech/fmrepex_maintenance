@@ -21,7 +21,12 @@ public class BuildingService implements ICrudService<Building>{
 
     @Override
     public boolean add(Building building) {
-        return buildingDAO.add(building);
+        if(building.hasId()){
+            return update(building);
+        }else {
+            return buildingDAO.add(building);
+        }
+
     }
 
     @Override

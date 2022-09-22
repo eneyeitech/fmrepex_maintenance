@@ -3,11 +3,19 @@ package com.eneyeitech.buildingmanagement.persistence;
 
 
 import com.eneyeitech.buildingmanagement.exception.TableException;
+import com.eneyeitech.buildingmanagement.helper.BuildingIdGenerator;
 
 import java.util.List;
 import java.util.Map;
 
 public abstract class DAO<T> {
+
+    protected BuildingIdGenerator buildingIdGenerator;
+
+    public DAO(){
+        buildingIdGenerator = new BuildingIdGenerator(10);
+    }
+
     protected Map<String, T> store;
     abstract public boolean add(T t);
     abstract public boolean remove(String id);

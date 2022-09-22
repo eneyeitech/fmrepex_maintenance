@@ -1,5 +1,8 @@
 package com.eneyeitech.usermanagement.presentation;
 
+import com.eneyeitech.builder.UserBuilder;
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.UserCommand;
 import com.eneyeitech.usermanagement.business.*;
 import com.eneyeitech.usermanagement.business.user.Tenant;
 
@@ -30,27 +33,13 @@ public class TenantConsole {
         return tenant.isApproved();
     }
     public void addDependant(){
-        boolean isTenant = isTenant();
-        if(!isTenant){
-            return;
-        }
-        if(!isApproved()){
-            System.out.println("Manager not yet approved.");
-            return;
-        }
         showPrompt("Add Dependant");
         String type = UserType.DEPENDANT.toString();
         UserBuilder userBuilder = new UserBuilder(scanner);
         User newUser = userBuilder.getUser(type);
-        boolean added = userService.add(newUser);
-        if(added){
-            userService.addDependantToTenant(tenant, newUser);
-            userService.add(tenant);
-            System.out.println("Tenant added!");
-
-        } else {
-            System.out.println("User exist");
-        }
+        Command command = new UserCommand(tenant, newUser, userService);
+        new com.eneyeitech.command.EmailNotifier(command);
+        command.actionRequester();
     }
 
     public void removeDependant(){

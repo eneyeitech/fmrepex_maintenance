@@ -1,4 +1,4 @@
-package com.eneyeitech.buildingmanagement.presentation;
+package com.eneyeitech.builder;
 
 import com.eneyeitech.buildingmanagement.business.Address;
 import com.eneyeitech.buildingmanagement.business.State;

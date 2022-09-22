@@ -3,6 +3,7 @@ package com.eneyeitech.command;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.user.Dependant;
+import com.eneyeitech.usermanagement.business.user.Manager;
 import com.eneyeitech.usermanagement.business.user.Technician;
 import com.eneyeitech.usermanagement.business.user.Tenant;
 
@@ -10,7 +11,8 @@ public class UserCommand extends Command{
     protected User loggedInUser;
     protected User userToRegister;
     private UserService userService;
-    private boolean added;
+    protected boolean added;
+    protected boolean approved;
 
     public UserCommand(User loggedInUser, User userToRegister, UserService userService){
         this.loggedInUser=loggedInUser;
@@ -19,7 +21,7 @@ public class UserCommand extends Command{
         added = false;
     }
 
-    public void handleRegister(){
+    private void handleRegister(){
         switch (loggedInUser.getUserType()){
             case MANAGER:
                 switch (userToRegister.getUserType()){
@@ -43,7 +45,24 @@ public class UserCommand extends Command{
             case DEPENDANT:
             case TECHNICIAN:
             case ADMINISTRATOR:
+                switch (userToRegister.getUserType()){
+                    case MANAGER:
+                        approveManager();
+                        break;
+                    default:
+                }
+                break;
             default:
+        }
+    }
+
+    private void approveManager(){
+        Manager manager = (Manager) userToRegister;
+
+        if(!manager.isApproved()){
+            manager.setApproved(true);
+            setApproved(true);
+            setSuccessful(true);
         }
     }
 
@@ -89,5 +108,13 @@ public class UserCommand extends Command{
     public void actionRequester() {
         handleRegister();
         notifyObservers();
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
     }
 }

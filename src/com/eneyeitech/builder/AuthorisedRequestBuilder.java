@@ -1,14 +1,19 @@
-package com.eneyeitech.requestmanagement.presentation;
+package com.eneyeitech.builder;
 
 import com.eneyeitech.requestmanagement.business.Category;
 import com.eneyeitech.requestmanagement.business.Request;
+import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.requestmanagement.helper.RequestIdGenerator;
+import com.eneyeitech.workordermanagement.business.WORequestService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 public class AuthorisedRequestBuilder {
+    private RequestService requestService;
+    private WORequestService woRequestService;
     private Scanner scanner;
     private Request request;
     private String description;
@@ -26,7 +31,25 @@ public class AuthorisedRequestBuilder {
 
         int n = rand.nextInt(categories.length);
         category = categories[n];
+    }
+    public AuthorisedRequestBuilder(RequestService requestService, WORequestService woRequestService){
+        this.requestService = requestService;
+        this.woRequestService = woRequestService;
+    }
 
+    public Request queryRequest(String requestId){
+        return requestService.get(requestId);
+    }
+
+    public List<Request> queryRequests(){
+        return requestService.getAll();
+    }
+
+    public List<Request> queryTenantRequests(String tenantEmail){
+        return requestService.getAll(tenantEmail);
+    }
+    public List<Request> queryManagerRequests(String managerEmail){
+        return woRequestService.getAll(managerEmail);
     }
 
     private String getString(String msg){
@@ -39,7 +62,8 @@ public class AuthorisedRequestBuilder {
     }
 
     public Request getRequest(){
-        request = new Request(new RequestIdGenerator(10));
+        //request = new Request(new RequestIdGenerator(10));
+        request = new Request();
         request.setAsset(asset);
         request.setDescription(description);
         request.setCategory(category);

@@ -4,6 +4,7 @@ import com.eneyeitech.buildingmanagement.business.Building;
 import com.eneyeitech.requestmanagement.business.Request;
 import com.eneyeitech.requestmanagement.database.RequestStore;
 import com.eneyeitech.requestmanagement.exception.TableException;
+import com.eneyeitech.requestmanagement.helper.RequestIdGenerator;
 
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class StoreRequestDAO extends DAO<Request>{
 
     @Override
     public boolean add(Request request) {
+        if(request.hasId()){
+            return update(request);
+        }
+
+        request.setId(requestIdGenerator.generate());
+
         String tenantEmail = request.getTenantEmail();
         List<Request> requests;
         List<Request> requestsInStore;

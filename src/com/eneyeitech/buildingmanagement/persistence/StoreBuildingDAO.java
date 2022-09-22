@@ -18,6 +18,10 @@ public class StoreBuildingDAO extends DAO<Building>{
 
     @Override
     public boolean add(Building building) {
+        if(building.hasId()){
+            return update(building);
+        }
+        building.setId(buildingIdGenerator.generate());
         Building buildingInStore = store.put(building.getId(), building);
         if(buildingInStore == null){
             return true;

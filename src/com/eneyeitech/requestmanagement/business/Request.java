@@ -1,11 +1,12 @@
 package com.eneyeitech.requestmanagement.business;
 
+import com.eneyeitech.constant.Status;
 import com.eneyeitech.requestmanagement.helper.RequestIdGenerator;
 
 import java.time.LocalDateTime;
 
 public class Request {
-    private String id;
+    private String id = null;
     private String description;
     private String asset;
     private Category category;
@@ -145,6 +146,10 @@ public class Request {
 
     public boolean hasWorkOrderId(){
         return workOrderId != null;
+    }
+
+    public boolean hasId(){
+        return getId() != null;
     }
 
     @Override

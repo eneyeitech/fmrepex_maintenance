@@ -1,4 +1,4 @@
-package com.eneyeitech.workordermanagement.business;
+package com.eneyeitech.constant;
 
 public enum Status {
     ACTIVE,

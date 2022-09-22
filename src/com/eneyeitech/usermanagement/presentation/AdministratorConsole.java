@@ -1,5 +1,7 @@
 package com.eneyeitech.usermanagement.presentation;
 
+import com.eneyeitech.command.Command;
+import com.eneyeitech.command.UserCommand;
 import com.eneyeitech.usermanagement.business.*;
 
 import java.util.List;
@@ -16,20 +18,15 @@ public class AdministratorConsole {
     }
 
     public User approveUser(User admin){
-        if(admin.getUserType() != UserType.ADMINISTRATOR){
-            System.out.println("User not authorized for this approval action");
-            return null;
-        }
-        showPrompt("Approve a user");
+
         String email = getEmail("Please enter user email: ");
         User userToApprove = (User) userService.get(email);
         if (userToApprove==null){
             System.out.println("User does not exist!");
         }else{
-            System.out.println(userToApprove);
-            userToApprove.setApproved(true);
-            System.out.println(userToApprove);
-            userService.add(userToApprove);
+            Command command = new UserCommand(admin, userToApprove, userService);
+            new com.eneyeitech.command.EmailNotifier(command);
+            command.actionRequester();
         }
         return userToApprove;
     }
