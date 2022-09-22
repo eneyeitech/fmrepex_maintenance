@@ -6,6 +6,8 @@ import com.eneyeitech.buildingmanagement.presentation.BuildingConsole;
 import com.eneyeitech.buildingmanagement.presentation.BuildingManagerConsole;
 import com.eneyeitech.command.Command;
 import com.eneyeitech.command.UserCommand;
+import com.eneyeitech.console.DependantConsole;
+import com.eneyeitech.console.TechnicianConsole;
 import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.requestmanagement.presentation.RequestConsole;
 import com.eneyeitech.requestmanagement.presentation.RequestDependantConsole;
@@ -105,29 +107,38 @@ public class Main {
         switch (loggedInUser.getUserType()){
 
             case ADMINISTRATOR:
+                com.eneyeitech.console.AdministratorConsole administratorConsole1 = new com.eneyeitech.console.AdministratorConsole(scanner, loggedInUser);
                 AdministratorConsole administratorConsole = new AdministratorConsole(scanner, userService);
                 int c = 20;
                 do{
-                    main.showMessage(main.adminOptions());
-                    c = main.adminChoice(administratorConsole, loggedInUser);
+                    //main.showMessage(main.adminOptions());
+                    //c = main.adminChoice(administratorConsole, loggedInUser);
+                    administratorConsole1.menuDisplay();
+                    c = administratorConsole1.handleSelection();
                 }while (c!=0);
                 break;
             case TECHNICIAN:
                 System.out.println(loggedInUser);
                 WorkOrderTechnicianConsole workOrderTechnicianConsole = new WorkOrderTechnicianConsole(scanner, workOrderService, loggedInUser);
+                TechnicianConsole technicianConsole = new TechnicianConsole(scanner, loggedInUser);
                 int t= 23;
                 do{
-                    main.showMessage(main.technicianOptions());
-                    t = main.technicianChoice(workOrderTechnicianConsole);
+                    //main.showMessage(main.technicianOptions());
+                    //t = main.technicianChoice(workOrderTechnicianConsole);
+                    technicianConsole.menuDisplay();
+                    t = technicianConsole.handleSelection();
                 }while (t!= 0);
                 break;
             case DEPENDANT:
                 System.out.println(loggedInUser);
                 RequestDependantConsole requestDependantConsole = new RequestDependantConsole(scanner, userService, requestService, loggedInUser);
+                DependantConsole dependantConsole = new DependantConsole(scanner, loggedInUser);
                 int q= 23;
                 do{
-                    main.showMessage(main.dependantOptions());
-                    q = main.dependantChoice(requestDependantConsole);
+                    //main.showMessage(main.dependantOptions());
+                    //q = main.dependantChoice(requestDependantConsole);
+                    dependantConsole.menuDisplay();
+                    q = dependantConsole.handleSelection();
                 }while (q!= 0);
                 break;
             case MANAGER:
@@ -143,10 +154,13 @@ public class Main {
                 System.out.println(loggedInUser);
                 TenantConsole tenantConsole = new TenantConsole(scanner, userService, loggedInUser);
                 RequestTenantConsole requestTenantConsole = new RequestTenantConsole(scanner, userService, requestService, loggedInUser);
+                com.eneyeitech.console.TenantConsole tenantConsole1 = new com.eneyeitech.console.TenantConsole(scanner, loggedInUser);
                 int r= 23;
                 do{
-                    main.showMessage(main.tenantOptions());
-                    r = main.tenantChoice(tenantConsole, requestTenantConsole);
+                    //main.showMessage(main.tenantOptions());
+                    //r = main.tenantChoice(tenantConsole, requestTenantConsole);
+                    tenantConsole1.menuDisplay();
+                    r = tenantConsole1.handleSelection();
                 }while (r!= 0);
                 break;
             default:
