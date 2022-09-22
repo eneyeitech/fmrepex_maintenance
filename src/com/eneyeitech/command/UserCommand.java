@@ -24,14 +24,18 @@ public class UserCommand extends Command{
     private void handleRegister(){
         switch (loggedInUser.getUserType()){
             case MANAGER:
-                switch (userToRegister.getUserType()){
-                    case TENANT:
-                        registerTenant();
-                        break;
-                    case TECHNICIAN:
-                        registerTechnician();
-                        break;
-                    default:
+                if(loggedInUser.isApproved()) {
+                    switch (userToRegister.getUserType()) {
+                        case TENANT:
+                            registerTenant();
+                            break;
+                        case TECHNICIAN:
+                            registerTechnician();
+                            break;
+                        default:
+                    }
+                } else {
+                    System.out.println("Manager not approved");
                 }
                 break;
             case TENANT:

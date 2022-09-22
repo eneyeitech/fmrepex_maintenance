@@ -33,6 +33,7 @@ public class ManagerConsole extends Console{
     private RequestService tenantRequestService;
     private WORequestService managementRequestService;
     private WorkOrderService workOrderService;
+    private AuthorisedRequestBuilder authorisedRequestBuilder;
 
     public ManagerConsole(Scanner scanner, User user){
         super(scanner, user);
@@ -41,6 +42,7 @@ public class ManagerConsole extends Console{
         tenantRequestService = new RequestService();
         managementRequestService = new WORequestService(tenantRequestService);
         workOrderService = new WorkOrderService();
+        authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
     }
     @Override
     public void menuDisplay() {
@@ -270,13 +272,11 @@ public class ManagerConsole extends Console{
     }
     protected void deAssignTenant(){
         Building building = getBuilding();
-        String flatLabel = getFlatNoOrLabel();
         String tenantEmail = getTenantEmail();
         UserBuilder userBuilder = new UserBuilder(userService);
         User tenant = userBuilder.queryUser(tenantEmail);
 
         if(tenant != null && building != null && tenant.getUserType()==UserType.TENANT){
-            ((Tenant)tenant).setFlatNoOrLabel(flatLabel);
             Command command = new BuildingCommand(user, tenant,building, buildingService);
             new com.eneyeitech.command.EmailNotifier(command);
             command.actionRequester();
@@ -304,9 +304,9 @@ public class ManagerConsole extends Console{
         UserBuilder userBuilder = new UserBuilder(userService);
         User tenant = userBuilder.queryUser(tenantEmail);
         List<Request> list = new ArrayList<>();
-        if(tenant != null && tenant.getUserType()==UserType.TENANT && user.getEmail().equals(((Tenant)tenant).getManagerEmail())){
-            AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
-            authorisedRequestBuilder.queryTenantRequests(tenantEmail);
+        if(tenant != null && tenant.getUserType()==UserType.TENANT && user.getEmail().equalsIgnoreCase(((Tenant)tenant).getManagerEmail())){
+            //AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
+            list = authorisedRequestBuilder.queryTenantRequests(tenantEmail);
         }
         int i = 0;
         for(Request request:list){
@@ -319,7 +319,7 @@ public class ManagerConsole extends Console{
        printMessage("All request list");
         List<Request> list;
 
-        AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
+        //AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
         list = authorisedRequestBuilder.queryManagerRequests(user.getEmail());
         if(list == null){
             return;
@@ -334,7 +334,7 @@ public class ManagerConsole extends Console{
     protected Request getRequest(){
         printMessage("Get a request");
         String requestId = getString("Enter request id: ");
-        AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
+        //AuthorisedRequestBuilder authorisedRequestBuilder = new AuthorisedRequestBuilder(tenantRequestService, managementRequestService);
         Request request = authorisedRequestBuilder.queryRequest(requestId);
         if(request == null){
             printMessage("Invalid request id");

@@ -49,6 +49,7 @@ public class ManagedBuilding extends Building {
             if(buildingOccupants.remove(tenant)){
                 tenant.setBuildingId(null);
                 tenant.setFlatNoOrLabel(null);
+                return true;
             }
         }
         return false;

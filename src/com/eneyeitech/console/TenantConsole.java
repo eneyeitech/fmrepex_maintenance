@@ -11,6 +11,7 @@ import com.eneyeitech.requestmanagement.business.RequestService;
 import com.eneyeitech.usermanagement.business.User;
 import com.eneyeitech.usermanagement.business.UserService;
 import com.eneyeitech.usermanagement.business.UserType;
+import com.eneyeitech.usermanagement.business.user.Dependant;
 import com.eneyeitech.usermanagement.business.user.Tenant;
 import com.eneyeitech.workordermanagement.business.WORequestService;
 
@@ -27,7 +28,8 @@ public class TenantConsole extends Console{
     public TenantConsole(Scanner scanner, User user){
         super(scanner, user);
         requestService = new RequestService();
-        woRequestService = new WORequestService();
+        woRequestService = new WORequestService(requestService);
+        userService = new UserService();
         requestBuilder = new AuthorisedRequestBuilder(requestService, woRequestService);
     }
 
@@ -197,7 +199,8 @@ public class TenantConsole extends Console{
 
     public void listRequests(){
         showPrompt("Request list!");
-        List<Request> list = requestService.getAll(user.getEmail());
+        //List<Request> list = requestService.getAll(user.getEmail());
+        List<Request> list = requestBuilder.queryTenantRequests(user.getEmail());
         int i = 0;
         for(Request request:list){
             DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
