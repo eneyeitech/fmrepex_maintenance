@@ -28,27 +28,18 @@ public class Main {
         woRequestService = new WORequestService(requestService);
         workOrderService = new WorkOrderService();
 
-        // Adding admin as first entry
-        User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
-        String e = "admin@gmail.com";
-        admin.setFullName("Abdulmumin".toUpperCase(Locale.ROOT));
-        admin.setEmail(e);
-        admin.setPhoneNumber("08051185104");
-        admin.setPassword("pxstar");
-
-        System.out.println(admin);
-
-        UserManagement registerManager = new Registration(admin, userService);
-        new SecurityMonitor(registerManager);
-        new GeneralLogger(registerManager);
-        new EmailNotifier(registerManager);
-        registerManager.handle();
-
-        AuthenticationConsole authenticationConsole = new AuthenticationConsole(scanner, null);
-
-        // Run main
         Main main = new Main();
+
+        // Adding admin as first entry
+        User admin = main.addAdmin("Abdulmumin","admin@gmail.com", "pxstar", "08051185104");
+
+        // Run App
+        main.init(main);
+    }
+
+    public void init(Main main){
         User loggedInUser = null;
+        AuthenticationConsole authenticationConsole = new AuthenticationConsole(scanner, null);
         while (true) {
 
             do {
@@ -56,7 +47,7 @@ public class Main {
                 loggedInUser = authenticationConsole.handle();
             } while (loggedInUser == null);
 
-            main.mainChoice(loggedInUser, main);
+            main.runFMRepEx(loggedInUser);
             loggedInUser = null;
 
             main.showMessage(main.exitOptions());
@@ -68,56 +59,24 @@ public class Main {
         }
     }
 
-    public int mainChoice(User loggedInUser, Main main){
-        switch (loggedInUser.getUserType()){
+    public User addAdmin(String name, String email, String password, String phoneNumber){
+        User admin = UserFactory.getUser(UserType.ADMINISTRATOR);
 
-            case ADMINISTRATOR:
-                AdministratorConsole administratorConsole = new AdministratorConsole(scanner, loggedInUser);
-                int c = 20;
-                do{
-                    administratorConsole.menuDisplay();
-                    c = administratorConsole.handleSelection();
-                }while (c!=0);
-                break;
-            case TECHNICIAN:
-                System.out.println(loggedInUser);
-                TechnicianConsole technicianConsole = new TechnicianConsole(scanner, loggedInUser);
-                int t= 23;
-                do{
-                    technicianConsole.menuDisplay();
-                    t = technicianConsole.handleSelection();
-                }while (t!= 0);
-                break;
-            case DEPENDANT:
-                System.out.println(loggedInUser);
-                DependantConsole dependantConsole = new DependantConsole(scanner, loggedInUser);
-                int q= 23;
-                do{
-                    dependantConsole.menuDisplay();
-                    q = dependantConsole.handleSelection();
-                }while (q!= 0);
-                break;
-            case MANAGER:
-                ManagerConsole managerConsole = new ManagerConsole(scanner, loggedInUser);
-                int i= 23;
-                do{
-                    managerConsole.menuDisplay();
-                    i = managerConsole.handleSelection();
+        admin.setFullName(name.toUpperCase(Locale.ROOT));
+        admin.setEmail(email);
+        admin.setPhoneNumber(phoneNumber);
+        admin.setPassword(password);
 
-                }while (i!= 0);
-                break;
-            case TENANT:
-                System.out.println(loggedInUser);
-                TenantConsole tenantConsole = new TenantConsole(scanner, loggedInUser);
-                int r= 23;
-                do{
-                    tenantConsole.menuDisplay();
-                    r = tenantConsole.handleSelection();
-                }while (r!= 0);
-                break;
-            default:
-        }
-        return 9;
+        UserManagement registerManager = new Registration(admin, userService);
+        new SecurityMonitor(registerManager);
+        new GeneralLogger(registerManager);
+        new EmailNotifier(registerManager);
+        return registerManager.handle();
+    }
+
+    public void runFMRepEx(User loggedInUser){
+        ConsoleManager consoleManager = new ConsoleManager(scanner, loggedInUser);
+        consoleManager.runMenu();
     }
 
     public String exitOptions(){
