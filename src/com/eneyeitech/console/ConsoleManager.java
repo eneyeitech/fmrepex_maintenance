@@ -58,7 +58,7 @@ public class ConsoleManager {
                 console = null;
         }
     }
-    public void runMenu(){
+    public void execute(){
         int c = 20;
         do{
             console.menuDisplay();

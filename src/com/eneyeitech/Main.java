@@ -76,7 +76,7 @@ public class Main {
 
     public void runFMRepEx(User loggedInUser){
         ConsoleManager consoleManager = new ConsoleManager(scanner, loggedInUser);
-        consoleManager.runMenu();
+        consoleManager.execute();
     }
 
     public String exitOptions(){
